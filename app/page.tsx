@@ -363,8 +363,8 @@ export default function HomePage() {
                     },
                     body: JSON.stringify({
                       cart,
-                      name,
-                      phone,
+                      nome: name,
+                      telefone: phone,
                     }),
                   }
                 );

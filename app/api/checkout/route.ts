@@ -9,14 +9,42 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
+
 export async function POST(req: Request) {
   try {
+console.log(process.env.SUPABASE_SERVICE_ROLE_KEY);
     const { cart, nome, telefone } = await req.json();
+
+    const total = cart.reduce(
+      (acc: number, item: any) =>
+        acc + item.price * item.quantity,
+      0
+    );
+
+    const { data: pedido, error } = await supabase
+      .from("pedidos")
+      .insert([
+        {
+          nome,
+          telefone,
+          pedido: cart,
+          total,
+          status: "pendente",
+        },
+      ])
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
 
     const preference = new Preference(client);
 
     const response = await preference.create({
       body: {
+        external_reference: String(pedido.id),
+
         items: cart.map((item: any, index: number) => ({
           id: String(index + 1),
           title: item.title,
@@ -26,19 +54,7 @@ export async function POST(req: Request) {
         })),
       },
     });
-await supabase.from("pedidos").insert([
-  {
-    nome,
-    telefone,
-    pedido: cart,
-    total: cart.reduce(
-      (acc: number, item: any) =>
-        acc + item.price * item.quantity,
-      0
-    ),
-    status: "pendente",
-  },
-]);
+
     return Response.json({
       id: response.id,
       init_point: response.init_point,
