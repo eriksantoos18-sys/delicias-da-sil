@@ -12,7 +12,6 @@ const supabase = createClient(
 
 export async function POST(req: Request) {
   try {
-console.log(process.env.SUPABASE_SERVICE_ROLE_KEY);
     const { cart, nome, telefone } = await req.json();
 
     const total = cart.reduce(
