@@ -43,6 +43,7 @@ export async function POST(req: Request) {
     const response = await preference.create({
       body: {
         external_reference: String(pedido.id),
+        notification_url: "https://delicias-da-sil.vercel.app/api/webhook",
 
         items: cart.map((item: any, index: number) => ({
           id: String(index + 1),
