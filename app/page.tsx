@@ -11,6 +11,7 @@ interface CartItem {
 }
 
 interface Product {
+  descricao: string;
   id: number;
   nome: string;
   preco: number;
@@ -23,6 +24,8 @@ export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [openCart, setOpenCart] = useState(false);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     loadProducts();
@@ -80,9 +83,9 @@ export default function HomePage() {
   return (
     <main className="bg-[#f8f1e7] min-h-screen">
 
-      <header className="w-full bg-[#4b2e2e] text-white px-8 py-4 flex items-center justify-between shadow-lg">
+      <header className="w-full bg-[#4b2e2e] text-white px-6 py-4 flex items-center justify-between shadow-lg">
 
-        <div className="text-3xl font-bold">
+        <div className="text-2xl md:text-3xl font-bold">
           Delicias da Sil
         </div>
 
@@ -108,9 +111,9 @@ export default function HomePage() {
 
       </header>
 
-      <section className="px-6 mt-6">
+      <section className="px-4 md:px-6 mt-5">
 
-        <div className="relative rounded-[30px] overflow-hidden h-[240px] md:h-[340px] shadow-xl">
+        <div className="relative rounded-[30px] overflow-hidden h-[180px] md:h-[300px] shadow-2xl">
 
           <img
             src="/banner.jpg"
@@ -119,24 +122,24 @@ export default function HomePage() {
 
         </div>
 
-        <section className="relative bg-white px-8 py-6 shadow-md rounded-b-3xl">
+        <section className="relative bg-white px-5 md:px-8 py-6 shadow-md rounded-b-3xl">
 
           <img
             src="/logo.png"
-            className="absolute -top-14 left-8 w-32 h-32 rounded-3xl object-cover shadow-xl border-4 border-white"
+            className="absolute -top-10 left-5 w-24 h-24 md:w-32 md:h-32 rounded-2xl object-cover border-4 border-white shadow-xl"
           />
 
-          <div className="ml-40">
+          <div className="ml-28 md:ml-40">
 
-            <h1 className="text-4xl font-bold text-[#4b2e2e]">
+            <h1 className="text-2xl md:text-4xl font-bold text-[#4b2e2e]">
               Delicias da Sil
             </h1>
 
-            <p className="text-gray-600 mt-2 text-lg">
+            <p className="text-gray-600 mt-1 md:mt-2 text-sm md:text-lg">
               Doces feitos com amor 🍫
             </p>
 
-            <div className="flex gap-4 mt-3 text-sm text-gray-500">
+            <div className="flex gap-3 mt-2 text-xs md:text-sm text-gray-500">
               <span>Aberto até 19h</span>
               <span>•</span>
               <span>Maceió - AL</span>
@@ -148,11 +151,55 @@ export default function HomePage() {
 
       </section>
 
+      <div className="px-4 md:px-6 mt-5">
+
+        <div className="bg-white rounded-2xl shadow-md px-4 py-3 flex items-center gap-3">
+
+          <span className="text-gray-400 text-xl">
+            🔍
+          </span>
+
+          <input
+            type="text"
+            placeholder="Buscar doces..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full outline-none text-gray-700"
+          />
+
+        </div>
+
+      </div>
+
       <div className="flex flex-col md:flex-row">
 
-        <section className="flex-1 p-6">
+        <section className="flex-1 p-4 md:p-6">
 
-          <div className="mt-4 mb-6">
+          <div className="flex gap-3 overflow-x-auto pb-2 mb-6">
+
+            <button className="bg-[#4b2e2e] text-white px-5 py-2 rounded-full whitespace-nowrap">
+              Todos
+            </button>
+
+            <button className="bg-white shadow px-5 py-2 rounded-full whitespace-nowrap">
+              Bolos
+            </button>
+
+            <button className="bg-white shadow px-5 py-2 rounded-full whitespace-nowrap">
+              Fatias
+            </button>
+
+            <button className="bg-white shadow px-5 py-2 rounded-full whitespace-nowrap">
+              Tortas
+            </button>
+
+            <button className="bg-white shadow px-5 py-2 rounded-full whitespace-nowrap">
+              Salgados
+            </button>
+
+          </div>
+
+          <div className="mb-6">
 
             <h2 className="text-3xl font-bold text-[#4b2e2e]">
               Nossos Produtos
@@ -164,52 +211,133 @@ export default function HomePage() {
 
           </div>
 
-          <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mt-10">
+          <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
-            {products.map((product) => (
+            {products
+  .filter((product) =>
+    product.nome
+      .toLowerCase()
+      .includes(search.toLowerCase())
+  )
+  .map((product) => (
 
               <div
                 key={product.id}
-                className="bg-white rounded-3xl p-4 shadow-lg"
+                className="group bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
               >
 
-                <img
-                  src={product.imagem}
-                  className="rounded-2xl w-full h-56 object-cover"
-                />
+                <div className="relative">
 
-                <h2 className="text-2xl font-bold mt-4">
-                  {product.nome}
-                </h2>
+                  <img
+                    src={product.imagem}
+                    className="w-full h-56 object-cover group-hover:scale-105 transition duration-500"
+                  />
 
-                <p className="mt-2 text-gray-600">
-                  Produto artesanal delicioso 🍰
-                </p>
+                  <div className="absolute top-3 right-3 bg-pink-500 text-white text-xs px-3 py-1 rounded-full font-semibold shadow">
+                    Destaque
+                  </div>
 
-                <p className="mt-4 font-bold text-xl">
-                  R$ {product.preco}
-                </p>
+                </div>
 
-                <p className="text-sm text-gray-500 mt-2">
-                  {product.estoque} disponíveis
-                </p>
+                <div className="p-4">
 
-                <button
-                  onClick={() =>
-                    addToCart({
-                      title: product.nome,
-                      price: product.preco,
-                      image: product.imagem,
-                      quantity: 1,
-                    })
+                  <h2 className="text-xl font-bold text-gray-800">
+                    {product.nome}
+                  </h2>
+
+                  <p className="text-gray-500 text-sm mt-1 line-clamp-2">
+                    {product.descricao}
+                  </p>
+
+                  <div className="flex items-center justify-between mt-5">
+
+                    <span className="text-2xl font-extrabold text-pink-600">
+                      R$ {product.preco.toFixed(2)}
+                    </span>
+
+                    {cart.find((item) => item.title === product.nome) ? (
+
+  <div className="flex items-center gap-3 bg-pink-500 text-white px-3 py-2 rounded-2xl active:scale-95 transition-all duration-150">
+
+    <button
+      onClick={() => {
+        const item = cart.find(
+          (cartItem) =>
+            cartItem.title === product.nome
+        );
+
+        if (item?.quantity === 1) {
+          setCart(
+            cart.filter(
+              (cartItem) =>
+                cartItem.title !== product.nome
+            )
+          );
+        } else {
+          setCart(
+            cart.map((cartItem) =>
+              cartItem.title === product.nome
+                ? {
+                    ...cartItem,
+                    quantity:
+                      cartItem.quantity - 1,
                   }
-                  disabled={product.estoque <= 0}
-                  className="mt-4 bg-[#4b2e2e] text-white px-4 py-3 rounded-2xl w-full disabled:bg-gray-400"
-                >
-                  {product.estoque > 0
-                    ? "Adicionar ao carrinho"
-                    : "Esgotado"}
-                </button>
+                : cartItem
+            )
+          );
+        }
+      }}
+      className="font-bold text-lg"
+    >
+      -
+    </button>
+
+    <span className="font-bold">
+      {
+        cart.find(
+          (item) =>
+            item.title === product.nome
+        )?.quantity
+      }
+    </span>
+
+    <button
+      onClick={() =>
+        addToCart({
+          title: product.nome,
+          price: product.preco,
+          image: product.imagem,
+          quantity: 1,
+        })
+      }
+      className="font-bold text-lg"
+    >
+      +
+    </button>
+
+  </div>
+
+) : (
+
+  <button
+    onClick={() =>
+      addToCart({
+        title: product.nome,
+        price: product.preco,
+        image: product.imagem,
+        quantity: 1,
+      })
+    }
+    className="bg-pink-500 hover:bg-pink-600 active:scale-95 transition-all duration-150 text-white px-4 py-2 rounded-2xl font-semibold"
+  >
+    Adicionar
+  </button>
+
+)}
+
+                  </div>
+
+                </div>
 
               </div>
 
@@ -219,7 +347,7 @@ export default function HomePage() {
 
         </section>
 
-        <aside className="w-full md:w-[420px] bg-white shadow-2xl p-6 flex flex-col">
+        <aside className="hidden md:flex md:w-[420px] bg-white shadow-2xl p-6 flex-col">
 
           <div className="flex justify-between items-center mb-6">
 
@@ -242,6 +370,7 @@ export default function HomePage() {
             )}
 
             {cart.map((item, index) => (
+
               <div
                 key={index}
                 className="flex items-center gap-4 bg-[#f8f1e7] rounded-2xl p-3"
@@ -315,74 +444,222 @@ export default function HomePage() {
                 </div>
 
               </div>
+
             ))}
 
           </div>
-
           <div className="border-t pt-6 mt-6">
 
-            <input
-              type="text"
-              placeholder="Seu nome"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full border border-gray-300 rounded-2xl p-3 mb-3"
-            />
+  <input
+    type="text"
+    placeholder="Seu nome"
+    value={name}
+    onChange={(e) => setName(e.target.value)}
+    className="w-full border border-gray-300 rounded-2xl p-3 mb-3"
+  />
 
-            <input
-              type="text"
-              placeholder="Seu telefone"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className="w-full border border-gray-300 rounded-2xl p-3 mb-4"
-            />
+  <input
+    type="text"
+    placeholder="Seu telefone"
+    value={phone}
+    onChange={(e) => setPhone(e.target.value)}
+    className="w-full border border-gray-300 rounded-2xl p-3 mb-4"
+  />
 
-            <div className="flex justify-between mb-2 text-gray-600">
-              <span>Subtotal</span>
-              <span>R$ {total.toFixed(2)}</span>
-            </div>
+  <div className="flex justify-between text-2xl font-bold mt-4">
+    <span>Total</span>
+    <span>R$ {total.toFixed(2)}</span>
+  </div>
 
-            <div className="flex justify-between mb-2 text-gray-600">
-              <span>Entrega</span>
-              <span>A combinar</span>
-            </div>
+  <button
+    onClick={async () => {
+      const response = await fetch(
+        "/api/checkout",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            cart,
+            nome: name,
+            telefone: phone,
+          }),
+        }
+      );
 
-            <div className="flex justify-between text-2xl font-bold mt-4">
-              <span>Total</span>
-              <span>R$ {total.toFixed(2)}</span>
-            </div>
+      const data = await response.json();
 
-            <button
-              onClick={async () => {
-                const response = await fetch(
-                  "/api/checkout",
-                  {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                      cart,
-                      nome: name,
-                      telefone: phone,
-                    }),
-                  }
-                );
+      window.open(data.init_point, "_blank");
+    }}
+    className="mt-6 bg-green-600 text-white w-full py-4 rounded-2xl text-xl font-bold"
+  >
+    Finalizar Compra
+  </button>
 
-                const data = await response.json();
-
-                window.open(data.init_point, "_blank");
-              }}
-              className="mt-6 bg-green-600 text-white w-full py-4 rounded-2xl text-xl font-bold"
-            >
-              Finalizar Compra
-            </button>
-
-          </div>
+</div>
 
         </aside>
 
       </div>
+
+      {cart.length > 0 && (
+
+        <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 w-[92%] md:hidden">
+
+          <button
+            onClick={() => setOpenCart(true)}
+            className="bg-[#4b2e2e] text-white w-full rounded-2xl px-5 py-4 shadow-2xl flex items-center justify-between"
+          >
+
+            <div className="flex items-center gap-3">
+
+              <span className="bg-white text-[#4b2e2e] w-8 h-8 rounded-full flex items-center justify-center font-bold">
+                {cart.length}
+              </span>
+
+              <div className="text-left">
+
+                <p className="font-bold">
+                  Ver sacola
+                </p>
+
+                <p className="text-sm text-gray-200">
+                  Toque para finalizar
+                </p>
+
+              </div>
+
+            </div>
+
+            <div className="font-bold text-lg">
+              R$ {total.toFixed(2)}
+            </div>
+
+          </button>
+
+        </div>
+
+      )}
+
+      {openCart && (
+
+        <div className="fixed inset-0 z-[60] bg-black/40 md:hidden">
+
+          <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-[30px] p-6 max-h-[85vh] overflow-y-auto">
+
+            <div className="flex items-center justify-between mb-6">
+
+              <h2 className="text-2xl font-bold">
+                Sua Sacola 🛒
+              </h2>
+
+              <button
+                onClick={() => setOpenCart(false)}
+                className="text-2xl"
+              >
+                ✕
+              </button>
+
+            </div>
+
+            <div className="space-y-4">
+
+              {cart.map((item, index) => (
+
+                <div
+                  key={index}
+                  className="flex items-center gap-4 bg-[#f8f1e7] rounded-2xl p-3"
+                >
+
+                  <img
+                    src={item.image}
+                    className="w-20 h-20 rounded-xl object-cover"
+                  />
+
+                  <div className="flex-1">
+
+                    <h3 className="font-bold">
+                      {item.title}
+                    </h3>
+
+                    <p className="text-gray-600">
+                      R$ {item.price.toFixed(2)}
+                    </p>
+
+                    <p className="text-sm text-gray-500">
+                      Quantidade: {item.quantity}
+                    </p>
+
+                  </div>
+
+                </div>
+
+              ))}
+
+            </div>
+
+            <div className="border-t mt-6 pt-6">
+
+              <input
+                type="text"
+                placeholder="Seu nome"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full border border-gray-300 rounded-2xl p-3 mb-3"
+              />
+
+              <input
+                type="text"
+                placeholder="Seu telefone"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-full border border-gray-300 rounded-2xl p-3 mb-4"
+              />
+
+              <div className="flex justify-between text-2xl font-bold mb-5">
+
+                <span>Total</span>
+
+                <span>
+                  R$ {total.toFixed(2)}
+                </span>
+
+              </div>
+
+              <button
+                onClick={async () => {
+                  const response = await fetch(
+                    "/api/checkout",
+                    {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        cart,
+                        nome: name,
+                        telefone: phone,
+                      }),
+                    }
+                  );
+
+                  const data = await response.json();
+
+                  window.open(data.init_point, "_blank");
+                }}
+                className="bg-green-600 text-white w-full py-4 rounded-2xl text-xl font-bold"
+              >
+                Finalizar Compra
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      )}
 
     </main>
   );
