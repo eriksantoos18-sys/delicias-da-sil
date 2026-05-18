@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 
@@ -17,6 +18,7 @@ interface Product {
   preco: number;
   estoque: number;
   imagem: string;
+  categoria: string;
 }
 
 export default function HomePage() {
@@ -26,6 +28,7 @@ export default function HomePage() {
   const [phone, setPhone] = useState("");
   const [openCart, setOpenCart] = useState(false);
   const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("Todos");
 
   useEffect(() => {
     loadProducts();
@@ -81,11 +84,11 @@ export default function HomePage() {
   );
 
   return (
-    <main className="bg-[#f8f1e7] min-h-screen">
+    <main className="bg-[#fffaf5] min-h-screen">
 
-      <header className="w-full bg-[#4b2e2e] text-white px-6 py-4 flex items-center justify-between shadow-lg">
+      <header className="w-full bg-[#4a2c2a] text-white px-6 py-4 flex items-center justify-between shadow-lg">
 
-        <div className="text-2xl md:text-3xl font-bold">
+        <div className="text-2xl md:text-2xl font-bold">
           Delicias da Sil
         </div>
 
@@ -99,9 +102,12 @@ export default function HomePage() {
             Promoções
           </button>
 
-          <button className="hover:text-yellow-300 transition">
-            Pedidos
-          </button>
+          <Link
+  href="/meu-pedido"
+  className="hover:text-yellow-300 transition"
+>
+  Pedidos
+</Link>
 
           <button className="hover:text-yellow-300 transition">
             Entrar
@@ -113,7 +119,7 @@ export default function HomePage() {
 
       <section className="px-4 md:px-6 mt-5">
 
-        <div className="relative rounded-[30px] overflow-hidden h-[180px] md:h-[300px] shadow-2xl">
+        <div className="relative rounded-[30px] overflow-hidden h-[130px] md:h-[210px] shadow-lg">
 
           <img
             src="/banner.jpg"
@@ -122,7 +128,7 @@ export default function HomePage() {
 
         </div>
 
-        <section className="relative bg-white px-5 md:px-8 py-6 shadow-md rounded-b-3xl">
+        <section className="relative bg-white px-5 md:px-8 py-6 shadow-md rounded-b-2xl">
 
           <img
             src="/logo.png"
@@ -171,37 +177,72 @@ export default function HomePage() {
 
       </div>
 
-      <div className="flex flex-col md:flex-row">
+      <div className="flex flex-col md:flex-row items-start">
 
-        <section className="flex-1 p-4 md:p-6">
+        <section className="w-full xl:w-[calc(100%-320px)] p-4 md:p-6">
 
           <div className="flex gap-3 overflow-x-auto pb-2 mb-6">
 
-            <button className="bg-[#4b2e2e] text-white px-5 py-2 rounded-full whitespace-nowrap">
-              Todos
-            </button>
+            <button
+  onClick={() => setCategory("Todos")}
+  className={`px-5 py-2 rounded-full whitespace-nowrap ${
+    category === "Todos"
+      ? "bg-[#4a2c2a] text-white"
+      : "bg-white shadow"
+  }`}
+>
+  Todos
+</button>
 
-            <button className="bg-white shadow px-5 py-2 rounded-full whitespace-nowrap">
-              Bolos
-            </button>
+           <button
+  onClick={() => setCategory("Bolos")}
+  className={`px-5 py-2 rounded-full whitespace-nowrap ${
+    category === "Bolos"
+      ? "bg-[#4a2c2a] text-white"
+      : "bg-white shadow"
+  }`}
+>
+  Bolos
+</button>
 
-            <button className="bg-white shadow px-5 py-2 rounded-full whitespace-nowrap">
-              Fatias
-            </button>
+            <button
+  onClick={() => setCategory("Fatias")}
+  className={`px-5 py-2 rounded-full whitespace-nowrap ${
+    category === "Fatias"
+      ? "bg-[#4a2c2a] text-white"
+      : "bg-white shadow"
+  }`}
+>
+  Fatias
+</button>
 
-            <button className="bg-white shadow px-5 py-2 rounded-full whitespace-nowrap">
-              Tortas
-            </button>
+           <button
+  onClick={() => setCategory("Tortas")}
+  className={`px-5 py-2 rounded-full whitespace-nowrap ${
+    category === "Tortas"
+      ? "bg-[#4a2c2a] text-white"
+      : "bg-white shadow"
+  }`}
+>
+  Tortas
+</button>
 
-            <button className="bg-white shadow px-5 py-2 rounded-full whitespace-nowrap">
-              Salgados
-            </button>
+            <button
+  onClick={() => setCategory("Salgados")}
+  className={`px-5 py-2 rounded-full whitespace-nowrap ${
+    category === "Salgados"
+      ? "bg-[#4a2c2a] text-white"
+      : "bg-white shadow"
+  }`}
+>
+  Salgados
+</button>
 
           </div>
 
           <div className="mb-6">
 
-            <h2 className="text-3xl font-bold text-[#4b2e2e]">
+            <h2 className="text-2xl font-bold text-[#4b2e2e]">
               Nossos Produtos
             </h2>
 
@@ -211,151 +252,168 @@ export default function HomePage() {
 
           </div>
 
-          <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <section className="grid grid-cols-2 gap-4">
 
-            {products
-  .filter((product) =>
-    product.nome
+{products
+  .filter((product) => {
+    const matchSearch = product.nome
       .toLowerCase()
-      .includes(search.toLowerCase())
-  )
+      .includes(search.toLowerCase());
+
+    const matchCategory =
+      category === "Todos" ||
+      product.categoria
+        ?.toLowerCase()
+        .trim() ===
+        category.toLowerCase().trim();
+
+    return matchSearch && matchCategory;
+  })
   .map((product) => (
 
-              <div
-                key={product.id}
-                className="group bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
-              >
+    <div
+      key={product.id}
+      className="group bg-white rounded-2xl border border-gray-200 hover:shadow-md transition-all duration-300"
+    >
 
-                <div className="relative">
+      <div className="flex items-center justify-between gap-4 p-4">
 
-                  <img
-                    src={product.imagem}
-                    className="w-full h-56 object-cover group-hover:scale-105 transition duration-500"
-                  />
+        <div className="flex-1 flex flex-col justify-between">
 
-                  <div className="absolute top-3 right-3 bg-pink-500 text-white text-xs px-3 py-1 rounded-full font-semibold shadow">
-                    Destaque
-                  </div>
+          <div>
 
-                </div>
+            <h2 className="text-[20px] font-semibold text-[#1f1f1f] leading-tight line-clamp-2">
+              {product.nome}
+            </h2>
 
-                <div className="p-4">
+            <p className="text-[15px] text-gray-500 mt-2 leading-6 line-clamp-2">
+              {product.descricao}
+            </p>
 
-                  <h2 className="text-xl font-bold text-gray-800">
-                    {product.nome}
-                  </h2>
+          </div>
 
-                  <p className="text-gray-500 text-sm mt-1 line-clamp-2">
-                    {product.descricao}
-                  </p>
+          <div className="flex items-center justify-between mt-5">
 
-                  <div className="flex items-center justify-between mt-5">
+            <span className="text-[18px] font-semibold text-[#1f1f1f]">
+              R$ {product.preco.toFixed(2)}
+            </span>
 
-                    <span className="text-2xl font-extrabold text-pink-600">
-                      R$ {product.preco.toFixed(2)}
-                    </span>
+            {cart.find((item) => item.title === product.nome) ? (
 
-                    {cart.find((item) => item.title === product.nome) ? (
+              <div className="flex items-center gap-3 bg-pink-500 text-white px-3 py-2 rounded-2xl active:scale-95 transition-all duration-150">
 
-  <div className="flex items-center gap-3 bg-pink-500 text-white px-3 py-2 rounded-2xl active:scale-95 transition-all duration-150">
+                <button
+                  onClick={() => {
+                    const item = cart.find(
+                      (cartItem) =>
+                        cartItem.title === product.nome
+                    );
 
-    <button
-      onClick={() => {
-        const item = cart.find(
-          (cartItem) =>
-            cartItem.title === product.nome
-        );
+                    if (item?.quantity === 1) {
+                      setCart(
+                        cart.filter(
+                          (cartItem) =>
+                            cartItem.title !== product.nome
+                        )
+                      );
+                    } else {
+                      setCart(
+                        cart.map((cartItem) =>
+                          cartItem.title === product.nome
+                            ? {
+                                ...cartItem,
+                                quantity:
+                                  cartItem.quantity - 1,
+                              }
+                            : cartItem
+                        )
+                      );
+                    }
+                  }}
+                  className="font-bold text-lg"
+                >
+                  -
+                </button>
 
-        if (item?.quantity === 1) {
-          setCart(
-            cart.filter(
-              (cartItem) =>
-                cartItem.title !== product.nome
-            )
-          );
-        } else {
-          setCart(
-            cart.map((cartItem) =>
-              cartItem.title === product.nome
-                ? {
-                    ...cartItem,
-                    quantity:
-                      cartItem.quantity - 1,
+                <span className="font-bold">
+                  {
+                    cart.find(
+                      (item) =>
+                        item.title === product.nome
+                    )?.quantity
                   }
-                : cartItem
-            )
-          );
-        }
-      }}
-      className="font-bold text-lg"
-    >
-      -
-    </button>
+                </span>
 
-    <span className="font-bold">
-      {
-        cart.find(
-          (item) =>
-            item.title === product.nome
-        )?.quantity
-      }
-    </span>
-
-    <button
-      onClick={() =>
-        addToCart({
-          title: product.nome,
-          price: product.preco,
-          image: product.imagem,
-          quantity: 1,
-        })
-      }
-      className="font-bold text-lg"
-    >
-      +
-    </button>
-
-  </div>
-
-) : (
-
-  <button
-    onClick={() =>
-      addToCart({
-        title: product.nome,
-        price: product.preco,
-        image: product.imagem,
-        quantity: 1,
-      })
-    }
-    className="bg-pink-500 hover:bg-pink-600 active:scale-95 transition-all duration-150 text-white px-4 py-2 rounded-2xl font-semibold"
-  >
-    Adicionar
-  </button>
-
-)}
-
-                  </div>
-
-                </div>
+                <button
+                  onClick={() =>
+                    addToCart({
+                      title: product.nome,
+                      price: product.preco,
+                      image: product.imagem,
+                      quantity: 1,
+                    })
+                  }
+                  className="font-bold text-lg"
+                >
+                  +
+                </button>
 
               </div>
 
-            ))}
+            ) : (
+
+              <button
+                onClick={() =>
+                  addToCart({
+                    title: product.nome,
+                    price: product.preco,
+                    image: product.imagem,
+                    quantity: 1,
+                  })
+                }
+                className="bg-[#6b2d2d] hover:bg-[#582222] text-white px-4 py-2 rounded-xl text-sm font-medium"
+              >
+                Adicionar
+              </button>
+
+            )}
+
+          </div>
+
+        </div>
+
+        <div className="relative">
+
+          <img
+            src={product.imagem}
+            className="w-24 h-24 rounded-2xl object-cover group-hover:scale-105 transition duration-500"
+          />
+
+          <div className="absolute top-2 right-2 bg-[#c48b5f] text-white text-[10px] px-2 py-1 rounded-full font-semibold">
+            Destaque
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  ))}
 
           </section>
 
         </section>
 
-        <aside className="hidden md:flex md:w-[420px] bg-white shadow-2xl p-6 flex-col">
+        <aside className="hidden md:flex md:w-[380px] h-[95vh] sticky top-4 bg-white border border-gray-200 rounded-[28px] shadow-xl p-5 flex-col m-4">
 
           <div className="flex justify-between items-center mb-6">
 
-            <h2 className="text-3xl font-bold">
+            <h2 className="text-2xl font-bold">
               Sacola 🛒
             </h2>
 
-            <span className="bg-[#4b2e2e] text-white px-3 py-1 rounded-full text-sm">
+            <span className="bg-[#ede7df] text-[#6b4b3e] text-white px-3 py-1 rounded-full text-sm">
               {cart.length} itens
             </span>
 
@@ -373,7 +431,7 @@ export default function HomePage() {
 
               <div
                 key={index}
-                className="flex items-center gap-4 bg-[#f8f1e7] rounded-2xl p-3"
+                className="flex items-center gap-4 bg-[#fffaf5] rounded-2xl p-3"
               >
 
                 <img
@@ -455,7 +513,7 @@ export default function HomePage() {
     placeholder="Seu nome"
     value={name}
     onChange={(e) => setName(e.target.value)}
-    className="w-full border border-gray-300 rounded-2xl p-3 mb-3"
+   className="w-full bg-[#f8f5f1] rounded-xl px-4 py-3 outline-none border border-transparent focus:border-[#c48b5f] mb-3"
   />
 
   <input
@@ -463,7 +521,7 @@ export default function HomePage() {
     placeholder="Seu telefone"
     value={phone}
     onChange={(e) => setPhone(e.target.value)}
-    className="w-full border border-gray-300 rounded-2xl p-3 mb-4"
+    className="w-full bg-[#f8f5f1] rounded-xl px-4 py-3 outline-none border border-transparent focus:border-[#c48b5f] mb-3"
   />
 
   <div className="flex justify-between text-2xl font-bold mt-4">
@@ -492,7 +550,7 @@ export default function HomePage() {
 
       window.open(data.init_point, "_blank");
     }}
-    className="mt-6 bg-green-600 text-white w-full py-4 rounded-2xl text-xl font-bold"
+    className="mt-6 bg-[#c48b5f] text-white w-full py-4 rounded-xl text-xl font-bold"
   >
     Finalizar Compra
   </button>
@@ -509,12 +567,12 @@ export default function HomePage() {
 
           <button
             onClick={() => setOpenCart(true)}
-            className="bg-[#4b2e2e] text-white w-full rounded-2xl px-5 py-4 shadow-2xl flex items-center justify-between"
+            className="bg-[#4a2c2a] text-white w-full rounded-2xl px-4 py-2.5 shadow-lg backdeop-blur-md flex items-center justify-between"
           >
 
             <div className="flex items-center gap-3">
 
-              <span className="bg-white text-[#4b2e2e] w-8 h-8 rounded-full flex items-center justify-center font-bold">
+              <span className="bg-white text-[#4b2e2e] w-7 h-7 rounded-full flex items-center justify-center font-bold">
                 {cart.length}
               </span>
 
@@ -524,7 +582,7 @@ export default function HomePage() {
                   Ver sacola
                 </p>
 
-                <p className="text-sm text-gray-200">
+                <p className="text-xs text-gray-200">
                   Toque para finalizar
                 </p>
 
@@ -532,7 +590,7 @@ export default function HomePage() {
 
             </div>
 
-            <div className="font-bold text-lg">
+            <div className="font-bold text-base">
               R$ {total.toFixed(2)}
             </div>
 
@@ -569,7 +627,7 @@ export default function HomePage() {
 
                 <div
                   key={index}
-                  className="flex items-center gap-4 bg-[#f8f1e7] rounded-2xl p-3"
+                  className="flex items-center gap-4 bg-[#fffaf5] rounded-2xl p-3"
                 >
 
                   <img
@@ -606,7 +664,7 @@ export default function HomePage() {
                 placeholder="Seu nome"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full border border-gray-300 rounded-2xl p-3 mb-3"
+                className="w-full bg-[#f8f5f1] rounded-xl px-4 py-3 outline-none border border-transparent focus:border-[#c48b5f] mb-3"
               />
 
               <input
@@ -614,7 +672,7 @@ export default function HomePage() {
                 placeholder="Seu telefone"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full border border-gray-300 rounded-2xl p-3 mb-4"
+                className="w-full bg-[#f8f5f1] rounded-xl px-4 py-3 outline-none border border-transparent focus:border-[#c48b5f] mb-3"
               />
 
               <div className="flex justify-between text-2xl font-bold mb-5">
@@ -648,7 +706,7 @@ export default function HomePage() {
 
                   window.open(data.init_point, "_blank");
                 }}
-                className="bg-green-600 text-white w-full py-4 rounded-2xl text-xl font-bold"
+                className="bg-[#c48b5f] text-white w-full py-4 rounded-xl text-xl font-bold"
               >
                 Finalizar Compra
               </button>
