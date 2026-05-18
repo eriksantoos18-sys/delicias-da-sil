@@ -252,7 +252,7 @@ export default function HomePage() {
 
           </div>
 
-          <section className="grid grid-cols-2 gap-4">
+          <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
 {products
   .filter((product) => {
