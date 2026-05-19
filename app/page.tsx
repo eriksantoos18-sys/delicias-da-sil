@@ -592,14 +592,16 @@ export default function HomePage() {
       )}
 
       {openCart && (
-
+          
         <div className="fixed inset-0 z-[60] bg-black/40 md:hidden">
 
-          <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-[30px] p-6 max-h-[85vh] overflow-y-auto">
+          <div className="absolute bottom-0 left-0 right-0 bg-[#fffaf7] rounded-t-[32px] px-5 pt-3 pb-6 max-h-[92vh] overflow-y-auto shadow-2xl">
 
-            <div className="flex items-center justify-between mb-6">
+            <div className="w-14 h-1.5 bg-gray-300 rounded-full mx-auto mb-5"></div>
 
-              <h2 className="text-2xl font-bold">
+              <div className="flex items-center justify-between mb-5">
+
+              <h2 className="text-[34px] font-bold text-[#3d1f1f]">
                 Sua Sacola 🛒
               </h2>
 
@@ -618,25 +620,25 @@ export default function HomePage() {
 
                 <div
                   key={index}
-                  className="flex items-center gap-4 bg-[#fffaf5] rounded-2xl p-3"
+                  className="flex items-center gap-4 bg-[#fffaf7] border border-[#f1e7dc] rounded-3xl p-4 shadow-sm"
                 >
 
                   <img
                     src={item.image}
-                    className="w-20 h-20 rounded-xl object-cover"
+                    className="w-24 h-24 rounded-2xl object-cover"
                   />
 
                   <div className="flex-1">
 
-                    <h3 className="font-bold">
+                    <h3 className="text-[22px] font-bold text-[#2d1f1f]">
                       {item.title}
                     </h3>
 
-                    <p className="text-gray-600">
+                    <p className="text-[28px] font-bold text-[#2d1f1f]">
                       R$ {item.price.toFixed(2)}
                     </p>
 
-                    <p className="text-sm text-gray-500">
+                    <p className="text-[15px] text-gray-500 mt-1">
                       Quantidade: {item.quantity}
                     </p>
 
@@ -655,7 +657,7 @@ export default function HomePage() {
                 placeholder="Seu nome"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full bg-[#f8f5f1] rounded-xl px-4 py-3 outline-none border border-transparent focus:border-[#c48b5f] mb-3"
+                className="w-full bg-white border border-[#ece2d7] rounded-2xl px-4 py-4 outline-none text-[16px] shadow-sm mb-3"
               />
 
               <input
@@ -663,18 +665,20 @@ export default function HomePage() {
                 placeholder="Seu telefone"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full bg-[#f8f5f1] rounded-xl px-4 py-3 outline-none border border-transparent focus:border-[#c48b5f] mb-3"
+                className="w-full bg-white border border-[#ece2d7] rounded-2xl px-4 py-4 outline-none text-[16px] shadow-sm mb-3"
               />
 
-              <div className="flex justify-between text-2xl font-bold mb-5">
+              <div className="flex justify-between items-center mt-6 mb-6">
 
-                <span>Total</span>
+  <span className="text-[34px] font-bold text-[#2d1f1f]">
+    Total
+  </span>
 
-                <span>
-                  R$ {total.toFixed(2)}
-                </span>
+  <span className="text-[34px] font-bold text-[#2d1f1f]">
+    R$ {total.toFixed(2)}
+  </span>
 
-              </div>
+</div>
 
               <button
                 onClick={async () => {
@@ -697,7 +701,7 @@ export default function HomePage() {
 
                   window.open(data.init_point, "_blank");
                 }}
-                className="bg-[#c48b5f] text-white w-full py-4 rounded-xl text-xl font-bold"
+                className="bg-[#c07a45] active:scale-[0.98] transition-all text-white w-full py-5 rounded-2xl text-2xl font-bold shadow-lg"
               >
                 Finalizar Compra
               </button>
