@@ -132,12 +132,12 @@ export default function HomePage() {
 
           <img
             src="/logo.png"
-            className="absolute -top-10 left-5 w-24 h-24 md:w-32 md:h-32 rounded-2xl object-cover border-4 border-white shadow-xl"
+            className="absolute -top-10 left-5 w-20 h-20 md:w-28 md:h-28 rounded-2xl object-cover border-4 border-white shadow-xl"
           />
 
           <div className="ml-28 md:ml-40">
 
-            <h1 className="text-2xl md:text-4xl font-bold text-[#4b2e2e]">
+            <h1 className="text-xl md:text-4xl font-bold text-[#4b2e2e]">
               Delicias da Sil
             </h1>
 
@@ -272,132 +272,123 @@ export default function HomePage() {
   .map((product) => (
 
     <div
-      key={product.id}
-      className="group bg-white rounded-2xl border border-gray-200 hover:shadow-md transition-all duration-300"
-    >
+  key={product.id}
+  className="bg-white rounded-3xl border border-gray-200 p-4 flex justify-between items-center shadow-sm"
+>
+  <div className="flex-1 pr-4">
 
-      <div className="flex items-center justify-between gap-4 p-4">
+    <h2 className="text-[28px] font-bold text-[#2d1f1f] leading-tight">
+      {product.nome}
+    </h2>
 
-        <div className="flex-1 flex flex-col justify-between">
+    <p className="text-gray-500 text-sm mt-2 leading-5 line-clamp-2">
+      {product.descricao}
+    </p>
 
-          <div>
+    <div className="flex items-center justify-between mt-5">
 
-            <h2 className="text-[20px] font-semibold text-[#1f1f1f] leading-tight line-clamp-2">
-              {product.nome}
-            </h2>
+      <span className="text-2xl font-bold text-[#2d2d2d]">
+        R$ {product.preco.toFixed(2)}
+      </span>
 
-            <p className="text-[15px] text-gray-500 mt-2 leading-6 line-clamp-2">
-              {product.descricao}
-            </p>
+      {cart.find((item) => item.title === product.nome) ? (
 
-          </div>
+        <div className="flex items-center gap-3 bg-[#6d2f2f] text-white px-3 py-2 rounded-2xl">
 
-          <div className="flex items-center justify-between mt-5">
+          <button
+            onClick={() => {
+              const item = cart.find(
+                (cartItem) =>
+                  cartItem.title === product.nome
+              );
 
-            <span className="text-[18px] font-semibold text-[#1f1f1f]">
-              R$ {product.preco.toFixed(2)}
-            </span>
+              if (item?.quantity === 1) {
+                setCart(
+                  cart.filter(
+                    (cartItem) =>
+                      cartItem.title !== product.nome
+                  )
+                );
+              } else {
+                setCart(
+                  cart.map((cartItem) =>
+                    cartItem.title === product.nome
+                      ? {
+                          ...cartItem,
+                          quantity:
+                            cartItem.quantity - 1,
+                        }
+                      : cartItem
+                  )
+                );
+              }
+            }}
+            className="font-bold text-lg"
+          >
+            -
+          </button>
 
-            {cart.find((item) => item.title === product.nome) ? (
+          <span className="font-bold">
+            {
+              cart.find(
+                (item) =>
+                  item.title === product.nome
+              )?.quantity
+            }
+          </span>
 
-              <div className="flex items-center gap-3 bg-pink-500 text-white px-3 py-2 rounded-2xl active:scale-95 transition-all duration-150">
-
-                <button
-                  onClick={() => {
-                    const item = cart.find(
-                      (cartItem) =>
-                        cartItem.title === product.nome
-                    );
-
-                    if (item?.quantity === 1) {
-                      setCart(
-                        cart.filter(
-                          (cartItem) =>
-                            cartItem.title !== product.nome
-                        )
-                      );
-                    } else {
-                      setCart(
-                        cart.map((cartItem) =>
-                          cartItem.title === product.nome
-                            ? {
-                                ...cartItem,
-                                quantity:
-                                  cartItem.quantity - 1,
-                              }
-                            : cartItem
-                        )
-                      );
-                    }
-                  }}
-                  className="font-bold text-lg"
-                >
-                  -
-                </button>
-
-                <span className="font-bold">
-                  {
-                    cart.find(
-                      (item) =>
-                        item.title === product.nome
-                    )?.quantity
-                  }
-                </span>
-
-                <button
-                  onClick={() =>
-                    addToCart({
-                      title: product.nome,
-                      price: product.preco,
-                      image: product.imagem,
-                      quantity: 1,
-                    })
-                  }
-                  className="font-bold text-lg"
-                >
-                  +
-                </button>
-
-              </div>
-
-            ) : (
-
-              <button
-                onClick={() =>
-                  addToCart({
-                    title: product.nome,
-                    price: product.preco,
-                    image: product.imagem,
-                    quantity: 1,
-                  })
-                }
-                className="bg-[#6b2d2d] hover:bg-[#582222] text-white px-4 py-2 rounded-xl text-sm font-medium"
-              >
-                Adicionar
-              </button>
-
-            )}
-
-          </div>
+          <button
+            onClick={() =>
+              addToCart({
+                title: product.nome,
+                price: product.preco,
+                image: product.imagem,
+                quantity: 1,
+              })
+            }
+            className="font-bold text-lg"
+          >
+            +
+          </button>
 
         </div>
 
-        <div className="relative">
+      ) : (
 
-          <img
-            src={product.imagem}
-            className="w-24 h-24 rounded-2xl object-cover group-hover:scale-105 transition duration-500"
-          />
+        <button
+          onClick={() =>
+            addToCart({
+              title: product.nome,
+              price: product.preco,
+              image: product.imagem,
+              quantity: 1,
+            })
+          }
+          className="bg-[#6d2f2f] text-white px-4 py-2 rounded-xl text-sm font-bold"
+        >
+          Adicionar
+        </button>
 
-          <div className="absolute top-2 right-2 bg-[#c48b5f] text-white text-[10px] px-2 py-1 rounded-full font-semibold">
-            Destaque
-          </div>
-
-        </div>
-
-      </div>
+      )}
 
     </div>
+
+  </div>
+
+  <div className="relative">
+
+    <img
+      src={product.imagem}
+      className="w-28 h-28 rounded-2xl object-cover"
+    />
+
+    <div className="absolute top-2 right-2 bg-[#c48b5f] text-white text-[10px] px-2 py-1 rounded-full font-bold">
+      Destaque
+    </div>
+
+  </div>
+
+</div>
 
   ))}
 
@@ -413,7 +404,7 @@ export default function HomePage() {
               Sacola 🛒
             </h2>
 
-            <span className="bg-[#ede7df] text-[#6b4b3e] text-white px-3 py-1 rounded-full text-sm">
+            <span className="bg-[#ede7df] text-[#6b4b3e] px-3 py-1 rounded-full text-sm">
               {cart.length} itens
             </span>
 
@@ -563,7 +554,7 @@ export default function HomePage() {
 
       {cart.length > 0 && (
 
-        <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 w-[92%] md:hidden">
+        <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-md md:hidden">
 
           <button
             onClick={() => setOpenCart(true)}
