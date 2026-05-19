@@ -605,7 +605,7 @@ export default function HomePage() {
           
         <div className="fixed inset-0 z-[60] bg-black/40 md:hidden">
 
-          <div className="absolute bottom-0 left-0 right-0 bg-[#f7f4f1] rounded-t-[26px] px-4 pt-2 pb-5 h-[88vh] overflow-y-auto shadow-2xl">
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-white rounded-t-[28px] px-5 pt-2 pb-5 h-[88vh] overflow-y-auto shadow-2xl">
 
             <div className="w-14 h-1.5 bg-gray-300 rounded-full mx-auto mb-5"></div>
 
@@ -635,16 +635,16 @@ export default function HomePage() {
 
                   <img
                     src={item.image}
-                    className="w-24 h-24 rounded-xl object-cover"
+                    className="w-[74px] h-[74px] rounded-[14px] object-cover"
                   />
 
                   <div className="flex-1">
 
-                    <h3 className="text-[22px] font-bold text-[#2d1f1f]">
+                    <h3 className="text-[16px] font-semibold text-[#2d1f1f] leading-5">
                       {item.title}
                     </h3>
 
-                    <p className="text-[18px] font-bold text-[#2d1f1f]">
+                    <p className="text-[15px] font-semibold text-[#2d1f1f] mt-1">
                       R$ {item.price.toFixed(2)}
                     </p>
 
