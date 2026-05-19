@@ -29,10 +29,12 @@ export default function HomePage() {
   const [openCart, setOpenCart] = useState(false);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("Todos");
+  const [isOpen, setIsOpen] = useState(true);
 
   useEffect(() => {
-    loadProducts();
-  }, []);
+  loadProducts();
+  loadStoreStatus();
+}, []);
 
   async function loadProducts() {
     const { data } = await supabase
@@ -43,6 +45,17 @@ export default function HomePage() {
       setProducts(data);
     }
   }
+async function loadStoreStatus() {
+  const { data } = await supabase
+    .from("configuracoes")
+    .select("loja_aberta")
+    .eq("id", 1)
+    .single();
+
+  if (data) {
+    setIsOpen(data.loja_aberta);
+  }
+}
 
   const addToCart = (item: CartItem) => {
     const existingItem = cart.find(
@@ -146,7 +159,17 @@ export default function HomePage() {
             </p>
 
             <div className="flex gap-3 mt-2 text-xs md:text-sm text-gray-500">
-              <span>Aberto até 19h</span>
+              <span
+  className={`font-medium ${
+    isOpen
+      ? "text-green-600"
+      : "text-red-500"
+  }`}
+>
+  {isOpen
+    ? "🟢 Aberto agora"
+    : "🔴 Fechado"}
+</span>
               <span>•</span>
               <span>Maceió - AL</span>
             </div>
@@ -348,8 +371,9 @@ export default function HomePage() {
           </span>
 
           <button
-            onClick={() =>
-              addToCart({
+  disabled={!isOpen}
+  onClick={() =>
+    addToCart({
                 title: product.nome,
                 price: product.preco,
                 image: product.imagem,
@@ -366,17 +390,22 @@ export default function HomePage() {
       ) : (
 
         <button
-          onClick={() =>
-            addToCart({
+  disabled={!isOpen}
+  onClick={() =>
+    addToCart({
               title: product.nome,
               price: product.preco,
               image: product.imagem,
               quantity: 1,
             })
           }
-          className="bg-[#6d2f2f] text-white px-4 py-2 rounded-full text-[13px] font-medium"
+          className={`px-4 py-2 rounded-full text-[13px] font-medium transition-all ${
+  isOpen
+    ? "bg-[#6d2f2f] text-white"
+    : "bg-gray-200 text-gray-500 cursor-not-allowed"
+}`}
         >
-          Adicionar
+          {isOpen ? "Adicionar" : "Fechado"}
         </button>
 
       )}
@@ -512,6 +541,7 @@ export default function HomePage() {
   <input
     type="text"
     placeholder="Seu nome"
+    required
     value={name}
     onChange={(e) => setName(e.target.value)}
    className="w-full bg-[#f8f5f1] rounded-xl px-4 py-3 outline-none border border-transparent focus:border-[#c48b5f] mb-3"
@@ -520,6 +550,7 @@ export default function HomePage() {
   <input
     type="text"
     placeholder="Seu telefone"
+    required
     value={phone}
     onChange={(e) => setPhone(e.target.value)}
     className="w-full bg-[#f8f5f1] rounded-xl px-4 py-3 outline-none border border-transparent focus:border-[#c48b5f] mb-3"
@@ -532,6 +563,10 @@ export default function HomePage() {
 
   <button
     onClick={async () => {
+      if (!name.trim() || !phone.trim()) {
+  alert("Preencha nome e telefone");
+  return;
+}
       const response = await fetch(
         "/api/checkout",
         {
@@ -732,8 +767,9 @@ export default function HomePage() {
         </p>
 
         <button
-          onClick={() =>
-            addToCart({
+  disabled={!isOpen}
+  onClick={() =>
+    addToCart({
               title: product.nome,
               price: product.preco,
               image: product.imagem,
@@ -742,7 +778,7 @@ export default function HomePage() {
           }
           className="mt-2 w-full bg-[#6d2f2f] text-white py-2 rounded-xl text-sm font-medium"
         >
-          Adicionar
+          {isOpen ? "Adicionar" : "Fechado"}
         </button>
 
       </div>
@@ -758,14 +794,16 @@ export default function HomePage() {
               <input
                 type="text"
                 placeholder="Seu nome"
+                required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full bg-white border border-[#ece2d7] rounded-2xl px-4 py-3 outline-none text-[16px] shadow-sm mb-3"
               />
 
               <input
-                type="text"
+                type="tel"
                 placeholder="Seu telefone"
+                required
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 className="w-full bg-white border border-[#ece2d7] rounded-2xl px-4 py-3 outline-none text-[16px] shadow-sm mb-3"
@@ -785,6 +823,10 @@ export default function HomePage() {
 
               <button
                 onClick={async () => {
+                  if (!name.trim() || !phone.trim()) {
+  alert("Preencha nome e telefone");
+  return;
+}
                   const response = await fetch(
                     "/api/checkout",
                     {

@@ -13,38 +13,90 @@ interface Pedido {
 }
 
 export default function AdminPage() {
-  const [orders, setOrders] = useState<Pedido[]>([]);
-const [authenticated, setAuthenticated] =
-  useState(false);
 
-const [password, setPassword] =
-  useState("");
-  
+  const [orders, setOrders] =
+    useState<Pedido[]>([]);
+
+  const [authenticated, setAuthenticated] =
+    useState(false);
+
+  const [password, setPassword] =
+    useState("");
+
+  const [isOpen, setIsOpen] =
+    useState(true);
+
   useEffect(() => {
-  const auth =
-    localStorage.getItem("admin-auth");
 
-  if (auth === "true") {
-    setAuthenticated(true);
-    loadOrders();
-  }
-}, []);
+    const auth =
+      localStorage.getItem("admin-auth");
+
+    if (auth === "true") {
+
+      setAuthenticated(true);
+
+      loadOrders();
+
+      loadStoreStatus();
+    }
+
+  }, []);
 
   async function loadOrders() {
+
     const { data } = await supabase
       .from("pedidos")
       .select("*")
-      .order("id", { ascending: false });
+      .order("id", {
+        ascending: false,
+      });
 
     if (data) {
       setOrders(data);
     }
   }
 
+  async function loadStoreStatus() {
+
+    const { data } = await supabase
+      .from("configuracoes")
+      .select("loja_aberta")
+      .eq("id", 1)
+      .single();
+
+    if (data) {
+      setIsOpen(data.loja_aberta);
+    }
+  }
+
+  async function toggleStore() {
+
+  const newStatus = !isOpen;
+
+  const { error } = await supabase
+    .from("configuracoes")
+    .update({
+      loja_aberta: newStatus,
+    })
+    .eq("id", 1);
+
+  if (error) {
+
+    console.log(error);
+
+    alert(error.message);
+
+    return;
+  }
+
+  setIsOpen(newStatus);
+}
+
   async function updateStatus(
     id: number,
     status: string
   ) {
+
     await supabase
       .from("pedidos")
       .update({ status })
@@ -53,8 +105,12 @@ const [password, setPassword] =
     loadOrders();
   }
 
-  function getStatusColor(status: string) {
+  function getStatusColor(
+    status: string
+  ) {
+
     switch (status) {
+
       case "pago":
         return "bg-green-500";
 
@@ -71,20 +127,27 @@ const [password, setPassword] =
         return "bg-orange-500";
     }
   }
-function login() {
-  if (password === "admin123") {
-    localStorage.setItem(
-      "admin-auth",
-      "true"
-    );
 
-    setAuthenticated(true);
+  function login() {
 
-    loadOrders();
-  } else {
-    alert("Senha incorreta");
+    if (password === "admin123") {
+
+      localStorage.setItem(
+        "admin-auth",
+        "true"
+      );
+
+      setAuthenticated(true);
+
+      loadOrders();
+
+      loadStoreStatus();
+
+    } else {
+
+      alert("Senha incorreta");
+    }
   }
-}
   if (!authenticated) {
   return (
     <main className="min-h-screen bg-[#f8f1e7] flex items-center justify-center p-6">
@@ -136,6 +199,22 @@ return (
           <p className="text-gray-500 mt-2">
             Gerencie os pedidos da loja
           </p>
+          <div className="mt-5">
+
+  <button
+    onClick={toggleStore}
+    className={`px-5 py-3 rounded-2xl text-white font-semibold transition-all ${
+      isOpen
+        ? "bg-red-500"
+        : "bg-green-600"
+    }`}
+  >
+    {isOpen
+      ? "Fechar Loja"
+      : "Abrir Loja"}
+  </button>
+
+</div>
 
         </div>
 
