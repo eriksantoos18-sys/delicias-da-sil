@@ -410,7 +410,7 @@ export default function HomePage() {
 
           </div>
 
-          <div className="flex-1 overflow-y-auto space-y-4">
+          <div className="flex-1 overflow-y-auto space-y-3">
 
             {cart.length === 0 && (
               <div className="text-center text-gray-500 mt-20">
@@ -541,7 +541,7 @@ export default function HomePage() {
 
       window.open(data.init_point, "_blank");
     }}
-    className="mt-6 bg-[#c48b5f] text-white w-full py-4 rounded-xl text-xl font-bold"
+    className="bg-[#c48b5f] text-white w-full py-3 rounded-2xl text-[18px] font-semibold shadow-md"
   >
     Finalizar Compra
   </button>
@@ -595,7 +595,7 @@ export default function HomePage() {
           
         <div className="fixed inset-0 z-[60] bg-black/40 md:hidden">
 
-          <div className="absolute bottom-0 left-0 right-0 bg-[#f7f4f1] rounded-t-[26px] px-4 pt-2 pb-5 max-h-[92vh] overflow-y-auto shadow-2xl">
+          <div className="absolute bottom-0 left-0 right-0 bg-[#f7f4f1] rounded-t-[26px] px-4 pt-2 pb-5 h-[88vh] overflow-y-auto shadow-2xl">
 
             <div className="w-14 h-1.5 bg-gray-300 rounded-full mx-auto mb-5"></div>
 
@@ -657,7 +657,7 @@ export default function HomePage() {
                 placeholder="Seu nome"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full bg-white border border-[#ece2d7] rounded-2xl px-4 py-4 outline-none text-[16px] shadow-sm mb-3"
+                className="w-full bg-white border border-[#ece2d7] rounded-2xl px-4 py-3 outline-none text-[16px] shadow-sm mb-3"
               />
 
               <input
@@ -665,16 +665,16 @@ export default function HomePage() {
                 placeholder="Seu telefone"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full bg-white border border-[#ece2d7] rounded-2xl px-4 py-4 outline-none text-[16px] shadow-sm mb-3"
+                className="w-full bg-white border border-[#ece2d7] rounded-2xl px-4 py-3 outline-none text-[16px] shadow-sm mb-3"
               />
 
               <div className="flex justify-between items-center mt-6 mb-6">
 
-  <span className="text-[34px] font-bold text-[#2d1f1f]">
+  <span className="text-[24px] font-bold text-[#2d1f1f]">
     Total
   </span>
 
-  <span className="text-[34px] font-bold text-[#2d1f1f]">
+  <span className="text-[24px] font-bold text-[#2d1f1f]">
     R$ {total.toFixed(2)}
   </span>
 
