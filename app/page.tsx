@@ -432,11 +432,11 @@ export default function HomePage() {
 
                 <div className="flex-1">
 
-                  <h3 className="font-bold text-lg">
+                  <h3 className="text-[18px] font-semibold text-[#2d1f1f]">
                     {item.title}
                   </h3>
 
-                  <p className="text-gray-600">
+                  <p className="text-[16px] font-semibold text-[#2d2d2d] mt-1">
                     R$ {item.price.toFixed(2)}
                   </p>
 
@@ -595,13 +595,13 @@ export default function HomePage() {
           
         <div className="fixed inset-0 z-[60] bg-black/40 md:hidden">
 
-          <div className="absolute bottom-0 left-0 right-0 bg-[#fffaf7] rounded-t-[32px] px-5 pt-3 pb-6 max-h-[92vh] overflow-y-auto shadow-2xl">
+          <div className="absolute bottom-0 left-0 right-0 bg-[#f7f4f1] rounded-t-[26px] px-4 pt-2 pb-5 max-h-[92vh] overflow-y-auto shadow-2xl">
 
             <div className="w-14 h-1.5 bg-gray-300 rounded-full mx-auto mb-5"></div>
 
               <div className="flex items-center justify-between mb-5">
 
-              <h2 className="text-[34px] font-bold text-[#3d1f1f]">
+              <h2 className="text-[24px] font-bold text-[#3d1f1f]">
                 Sua Sacola 🛒
               </h2>
 
@@ -620,12 +620,12 @@ export default function HomePage() {
 
                 <div
                   key={index}
-                  className="flex items-center gap-4 bg-[#fffaf7] border border-[#f1e7dc] rounded-3xl p-4 shadow-sm"
+                  className="flex items-center gap-3 bg-white border border-[#ebe3da] rounded-2xl p-3 shadow-sm"
                 >
 
                   <img
                     src={item.image}
-                    className="w-24 h-24 rounded-2xl object-cover"
+                    className="w-24 h-24 rounded-xl object-cover"
                   />
 
                   <div className="flex-1">
@@ -634,7 +634,7 @@ export default function HomePage() {
                       {item.title}
                     </h3>
 
-                    <p className="text-[28px] font-bold text-[#2d1f1f]">
+                    <p className="text-[18px] font-bold text-[#2d1f1f]">
                       R$ {item.price.toFixed(2)}
                     </p>
 
