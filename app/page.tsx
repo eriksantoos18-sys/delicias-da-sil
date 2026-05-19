@@ -379,7 +379,7 @@ export default function HomePage() {
 
     <img
       src={product.imagem}
-      className="w-28 h-28 rounded-2xl object-cover"
+      className="w-20 h-20 rounded-xl object-cover"
     />
 
     <div className="absolute top-2 right-2 bg-[#c48b5f] text-white text-[10px] px-2 py-1 rounded-full font-bold">
