@@ -273,27 +273,37 @@ export default function HomePage() {
 
     <div
   key={product.id}
-  className="bg-white rounded-3xl border border-gray-200 p-4 flex justify-between items-center shadow-sm"
+  className="bg-white border border-[#ece7e2] rounded-[22px] p-3 flex gap-3 shadow-sm"
 >
-  <div className="flex-1 pr-4">
 
-    <h2 className="text-[28px] font-bold text-[#2d1f1f] leading-tight">
-      {product.nome}
-    </h2>
+  <img
+    src={product.imagem}
+    className="w-[88px] h-[88px] rounded-[18px] object-cover shrink-0"
+  />
 
-    <p className="text-gray-500 text-sm mt-2 leading-5 line-clamp-2">
-      {product.descricao}
-    </p>
+  <div className="flex-1 min-w-0 flex flex-col justify-between">
 
-    <div className="flex items-center justify-between mt-5">
+    <div>
 
-      <span className="text-2xl font-bold text-[#2d2d2d]">
+      <h2 className="text-[17px] font-semibold text-[#2d1f1f] leading-5 truncate">
+        {product.nome}
+      </h2>
+
+      <p className="text-[13px] text-[#7a7a7a] mt-1 leading-4 line-clamp-2">
+        {product.descricao}
+      </p>
+
+    </div>
+
+    <div className="flex items-center justify-between mt-3">
+
+      <span className="text-[16px] font-semibold text-[#2d1f1f]">
         R$ {product.preco.toFixed(2)}
       </span>
 
       {cart.find((item) => item.title === product.nome) ? (
 
-        <div className="flex items-center gap-3 bg-[#6d2f2f] text-white px-3 py-2 rounded-2xl">
+        <div className="flex items-center gap-3 bg-[#6d2f2f] text-white px-3 py-1.5 rounded-full">
 
           <button
             onClick={() => {
@@ -323,12 +333,12 @@ export default function HomePage() {
                 );
               }
             }}
-            className="font-bold text-lg"
+            className="text-sm font-bold"
           >
             -
           </button>
 
-          <span className="font-bold">
+          <span className="text-sm font-semibold">
             {
               cart.find(
                 (item) =>
@@ -346,7 +356,7 @@ export default function HomePage() {
                 quantity: 1,
               })
             }
-            className="font-bold text-lg"
+            className="text-sm font-bold"
           >
             +
           </button>
@@ -364,7 +374,7 @@ export default function HomePage() {
               quantity: 1,
             })
           }
-          className="bg-[#6d2f2f] text-white px-4 py-2 rounded-xl text-sm font-bold"
+          className="bg-[#6d2f2f] text-white px-4 py-2 rounded-full text-[13px] font-medium"
         >
           Adicionar
         </button>
@@ -373,7 +383,7 @@ export default function HomePage() {
 
     </div>
 
-  </div>
+</div>
 
   <div className="relative">
 
