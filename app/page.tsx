@@ -648,9 +648,53 @@ export default function HomePage() {
                       R$ {item.price.toFixed(2)}
                     </p>
 
-                    <p className="text-[15px] text-gray-500 mt-1">
-                      Quantidade: {item.quantity}
-                    </p>
+                    <div className="flex items-center gap-2 mt-3">
+
+  <button
+    onClick={() => {
+      if (item.quantity === 1) {
+        removeItem(index);
+      } else {
+        setCart(
+          cart.map((cartItem) =>
+            cartItem.title === item.title
+              ? {
+                  ...cartItem,
+                  quantity: cartItem.quantity - 1,
+                }
+              : cartItem
+          )
+        );
+      }
+    }}
+    className="w-8 h-8 rounded-full bg-[#f1ece7] text-[#2d1f1f] font-bold text-lg"
+  >
+    -
+  </button>
+
+  <span className="text-[15px] font-medium w-5 text-center">
+    {item.quantity}
+  </span>
+
+  <button
+    onClick={() => {
+      setCart(
+        cart.map((cartItem) =>
+          cartItem.title === item.title
+            ? {
+                ...cartItem,
+                quantity: cartItem.quantity + 1,
+              }
+            : cartItem
+        )
+      );
+    }}
+    className="w-8 h-8 rounded-full bg-[#6d2f2f] text-white font-bold text-lg"
+  >
+    +
+  </button>
+
+</div>
 
                   </div>
 
@@ -659,6 +703,55 @@ export default function HomePage() {
               ))}
 
             </div>
+<div className="mt-7">
+
+  <h3 className="text-[18px] font-semibold text-[#2d1f1f] mb-4">
+    Peça também
+  </h3>
+
+  <div className="flex gap-3 overflow-x-auto pb-2">
+
+    {products.slice(0, 4).map((product) => (
+
+      <div
+        key={product.id}
+        className="min-w-[140px] bg-white rounded-2xl border border-[#ebe3da] p-2 shadow-sm"
+      >
+
+        <img
+          src={product.imagem}
+          className="w-full h-[95px] rounded-xl object-cover"
+        />
+
+        <h4 className="text-[14px] font-semibold mt-2 line-clamp-2">
+          {product.nome}
+        </h4>
+
+        <p className="text-[14px] font-bold mt-1">
+          R$ {product.preco.toFixed(2)}
+        </p>
+
+        <button
+          onClick={() =>
+            addToCart({
+              title: product.nome,
+              price: product.preco,
+              image: product.imagem,
+              quantity: 1,
+            })
+          }
+          className="mt-2 w-full bg-[#6d2f2f] text-white py-2 rounded-xl text-sm font-medium"
+        >
+          Adicionar
+        </button>
+
+      </div>
+
+    ))}
+
+  </div>
+
+</div>
 
             <div className="border-t mt-6 pt-6">
 
