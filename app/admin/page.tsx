@@ -9,6 +9,7 @@ interface Pedido {
   telefone: string;
   total: number;
   status: string;
+  entregue: boolean;
   pedido: any[];
 }
 
@@ -26,6 +27,9 @@ export default function AdminPage() {
   const [isOpen, setIsOpen] =
     useState(true);
 
+  const [lastOrderCount, setLastOrderCount] =
+     useState(0);
+
   useEffect(() => {
 
     const auth =
@@ -38,6 +42,36 @@ export default function AdminPage() {
       loadOrders();
 
       loadStoreStatus();
+      const channel = supabase
+  .channel("pedidos-realtime")
+  .on(
+    "postgres_changes",
+    {
+      event: "*",
+      schema: "public",
+      table: "pedidos",
+    },
+    (payload) => {
+
+  loadOrders();
+
+  if (payload.eventType === "INSERT") {
+
+    const audio = new Audio("/notification.mp3");
+
+audio.play().catch(() => {
+  console.log("Som bloqueado até interação do usuário");
+});
+
+    audio.play();
+  }
+}
+  )
+  .subscribe();
+
+return () => {
+  supabase.removeChannel(channel);
+};
     }
 
   }, []);
@@ -111,21 +145,15 @@ export default function AdminPage() {
 
     switch (status) {
 
-      case "pago":
-        return "bg-green-500";
+  case "pago":
+    return "bg-green-500";
 
-      case "preparando":
-        return "bg-yellow-500";
+  case "entregue":
+    return "bg-gray-700";
 
-      case "saiu_entrega":
-        return "bg-blue-500";
-
-      case "entregue":
-        return "bg-gray-700";
-
-      default:
-        return "bg-orange-500";
-    }
+  default:
+    return "bg-orange-500";
+}
   }
 
   function login() {
@@ -253,38 +281,32 @@ return (
                     {order.status.replace("_", " ")}
                   </span>
 
-                  <select
-                    value={order.status}
-                    onChange={(e) =>
-                      updateStatus(
-                        order.id,
-                        e.target.value
-                      )
-                    }
-                    className="border border-gray-300 rounded-2xl px-4 py-2 outline-none"
-                  >
+                 {!order.entregue ? (
 
-                    <option value="pendente">
-                      Pendente
-                    </option>
+  <button
+    onClick={async () => {
 
-                    <option value="pago">
-                      Pago
-                    </option>
+      await supabase
+        .from("pedidos")
+        .update({
+          entregue: true
+        })
+        .eq("id", order.id);
 
-                    <option value="preparando">
-                      Preparando
-                    </option>
+      loadOrders();
+    }}
+    className="bg-blue-500 text-white px-4 py-2 rounded-full font-semibold"
+  >
+    Aguardando entrega
+  </button>
 
-                    <option value="saiu_entrega">
-                      Saiu para entrega
-                    </option>
+) : (
 
-                    <option value="entregue">
-                      Entregue
-                    </option>
+  <div className="bg-gray-700 text-white px-4 py-2 rounded-full font-semibold">
+    Entregue
+  </div>
 
-                  </select>
+)}
 
                 </div>
 
@@ -312,7 +334,7 @@ return (
                           {item.title}
                         </h3>
 
-                        <p className="text-gray-500 text-sm">
+                        <p className="text-gray-500 text-sm mt-1 leading-5 line-clamp-2 overflow-hidden">
                           Quantidade: {item.quantity}
                         </p>
 

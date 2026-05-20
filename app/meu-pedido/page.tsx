@@ -9,6 +9,7 @@ interface Pedido {
   telefone: string;
   total: number;
   status: string;
+  entregue: boolean;
   pedido: any[];
 }
 
@@ -71,12 +72,31 @@ export default function MeuPedidoPage() {
           <div className="flex gap-3">
 
             <input
-              type="text"
-              placeholder="Seu telefone"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className="flex-1 border border-gray-300 rounded-2xl px-4 py-3 outline-none"
-            />
+  type="tel"
+  placeholder="(82) 91234-5678"
+  required
+  value={phone}
+  maxLength={15}
+  onChange={(e) => {
+
+    let value = e.target.value
+      .replace(/\D/g, "")
+      .slice(0, 11);
+
+    value = value.replace(
+      /^(\d{2})(\d)/g,
+      "($1) $2"
+    );
+
+    value = value.replace(
+      /(\d{5})(\d)/,
+      "$1-$2"
+    );
+
+    setPhone(value);
+  }}
+  className="w-full"
+/>
 
             <button
               onClick={searchOrders}
@@ -125,10 +145,16 @@ export default function MeuPedidoPage() {
                 </div>
 
                 <span
-                  className={`${getStatusColor(order.status)} text-white px-4 py-2 rounded-full text-sm font-semibold capitalize`}
-                >
-                  {order.status.replace("_", " ")}
-                </span>
+  className={`${getStatusColor(
+    order.entregue
+      ? "entregue"
+      : order.status
+  )} text-white px-4 py-2 rounded-full font-semibold capitalize`}
+>
+  {order.entregue
+    ? "Entregue"
+    : order.status}
+</span>
 
               </div>
 
