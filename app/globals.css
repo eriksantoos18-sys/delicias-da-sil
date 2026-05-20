@@ -1,26 +1,63 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --primary: #6d2f2f;
+  --primary-dark: #4a2c2a;
+
+  --background: #fffaf5;
+  --card: #ffffff;
+
+  --text: #2d1f1f;
+  --text-light: #7a7a7a;
+
+  --border: #ece7e2;
+
+  --success: #16a34a;
+  --danger: #dc2626;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
+  color: var(--text);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@keyframes slideUp {
+
+  from {
+    transform:
+      translateX(-50%)
+      translateY(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform:
+      translateX(-50%)
+      translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slideUp {
+  animation:
+    slideUp 0.28s ease-out;
 }
