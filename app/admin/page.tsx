@@ -11,6 +11,7 @@ interface Pedido {
   status: string;
   entregue: boolean;
   pedido: any[];
+  created_at: string;
 }
 
 export default function AdminPage() {
@@ -21,6 +22,8 @@ export default function AdminPage() {
   const [authenticated, setAuthenticated] =
     useState(false);
 
+  const [email, setEmail] = useState("");
+
   const [password, setPassword] =
     useState("");
 
@@ -30,51 +33,58 @@ export default function AdminPage() {
   const [lastOrderCount, setLastOrderCount] =
      useState(0);
 
-  useEffect(() => {
+useEffect(() => {
 
-    const auth =
-      localStorage.getItem("admin-auth");
+  let channel: any;
 
-    if (auth === "true") {
+  supabase.auth.getSession().then(({ data }) => {
+
+    if (data.session) {
 
       setAuthenticated(true);
 
       loadOrders();
-
       loadStoreStatus();
-      const channel = supabase
-  .channel("pedidos-realtime")
-  .on(
-    "postgres_changes",
-    {
-      event: "*",
-      schema: "public",
-      table: "pedidos",
-    },
-    (payload) => {
 
-  loadOrders();
+      channel = supabase
+        .channel("pedidos-realtime")
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "pedidos",
+          },
+          (payload) => {
 
-  if (payload.eventType === "INSERT") {
+            loadOrders();
 
-    const audio = new Audio("/notification.mp3");
+            if (payload.eventType === "INSERT") {
 
-audio.play().catch(() => {
-  console.log("Som bloqueado até interação do usuário");
-});
+              const audio = new Audio("/notification.mp3");
 
-    audio.play();
-  }
-}
-  )
-  .subscribe();
+              audio.play().catch(() => {
+                console.log(
+                  "Som bloqueado até interação do usuário"
+                );
+              });
 
-return () => {
-  supabase.removeChannel(channel);
-};
+            }
+          }
+        )
+        .subscribe();
+
     }
 
-  }, []);
+  });
+
+  return () => {
+    if (channel) {
+      supabase.removeChannel(channel);
+    }
+  };
+
+}, []);
 
   async function loadOrders() {
 
@@ -156,26 +166,104 @@ return () => {
 }
   }
 
-  function login() {
+  async function login() {
 
-    if (password === "admin123") {
+  const { error } =
+    await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-      localStorage.setItem(
-        "admin-auth",
-        "true"
-      );
-
-      setAuthenticated(true);
-
-      loadOrders();
-
-      loadStoreStatus();
-
-    } else {
-
-      alert("Senha incorreta");
-    }
+  if (error) {
+    alert("Email ou senha inválidos");
+    return;
   }
+
+  setAuthenticated(true);
+
+  loadOrders();
+  loadStoreStatus();
+}
+async function logout() {
+  await supabase.auth.signOut();
+
+  setAuthenticated(false);
+
+  setEmail("");
+  setPassword("");
+}
+  function imprimirPedido(order: Pedido) {
+  const conteudo = `
+    <html>
+      <body style="font-family: Arial; padding: 20px;">
+        <h1>Pedido #${order.id}</h1>
+
+        <p>Cliente: ${order.nome}</p>
+        <p>Telefone: ${order.telefone}</p>
+
+        <hr>
+
+        ${order.pedido
+          .map(
+            (item) => `
+              <p>
+                ${item.quantity}x ${item.title}
+                - R$ ${(item.price * item.quantity).toFixed(2)}
+              </p>
+            `
+          )
+          .join("")}
+
+        <hr>
+
+        <h2>Total: R$ ${order.total.toFixed(2)}</h2>
+      </body>
+    </html>
+  `;
+
+  const janela = window.open("", "_blank");
+
+  if (!janela) return;
+
+  janela.document.write(conteudo);
+  janela.document.close();
+
+  setTimeout(() => {
+    janela.print();
+  }, 300);
+}
+const totalVendas = orders
+  .filter(
+    (order) => order.status === "pago"
+  )
+  .reduce(
+    (total, order) => total + order.total,
+    0
+  );
+
+const pedidosEntregues = orders.filter(
+  (order) => order.entregue
+).length;
+
+const pedidosPendentes = orders.filter(
+  (order) => !order.entregue
+).length;
+const hoje = new Date().toISOString().split("T")[0];
+
+const pedidosHoje = orders.filter(
+  (order) =>
+    order.created_at &&
+    order.created_at.startsWith(hoje)
+);
+
+const vendasHoje = pedidosHoje
+  .filter(
+    (order) => order.status === "pago"
+  )
+  .reduce(
+    (total, order) => total + order.total,
+    0
+  );
   if (!authenticated) {
   return (
     <main className="min-h-screen bg-[#f8f1e7] flex items-center justify-center p-6">
@@ -188,8 +276,17 @@ return () => {
 
         <p className="text-gray-500 mb-6">
           Digite a senha para acessar.
-        </p>
+        </p> 
 
+        <input
+  type="email"
+  placeholder="Email"
+  value={email}
+  onChange={(e) =>
+    setEmail(e.target.value)
+  }
+  className="w-full border border-gray-300 rounded-2xl px-4 py-3 mb-4 outline-none"
+/>
         <input
           type="password"
           placeholder="Senha"
@@ -220,13 +317,83 @@ return (
 
         <div className="mb-8">
 
-          <h1 className="text-4xl font-bold text-[#4b2e2e]">
-            Painel Admin 🍰
-          </h1>
+          <div className="flex items-center justify-between">
+
+  <h1 className="text-4xl font-bold text-[#4b2e2e]">
+    Painel Admin 🍰
+  </h1>
+
+  <button
+    onClick={logout}
+    className="bg-red-500 text-white px-4 py-2 rounded-2xl font-semibold"
+  >
+    Sair
+  </button>
+
+</div>
 
           <p className="text-gray-500 mt-2">
             Gerencie os pedidos da loja
           </p>
+<div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-5">
+
+  <div className="bg-green-500 text-white p-5 rounded-3xl shadow-lg">
+    <p className="text-sm opacity-90">
+      Faturamento
+    </p>
+
+    <h2 className="text-2xl font-bold mt-2">
+      R$ {totalVendas.toFixed(2)}
+    </h2>
+  </div>
+
+  <div className="bg-blue-500 text-white p-5 rounded-3xl shadow-lg">
+    <p className="text-sm opacity-90">
+      Pedidos
+    </p>
+
+    <h2 className="text-2xl font-bold mt-2">
+      {orders.length}
+    </h2>
+  </div>
+
+  <div className="bg-purple-500 text-white p-5 rounded-3xl shadow-lg">
+    <p className="text-sm opacity-90">
+      Entregues
+    </p>
+
+    <h2 className="text-2xl font-bold mt-2">
+      {pedidosEntregues}
+    </h2>
+  </div>
+
+  <div className="bg-orange-500 text-white p-5 rounded-3xl shadow-lg">
+    <p className="text-sm opacity-90">
+      Pendentes
+    </p>
+
+    <h2 className="text-2xl font-bold mt-2">
+      {pedidosPendentes}
+    </h2>
+  </div>
+
+  <div className="bg-emerald-600 text-white p-5 rounded-3xl shadow-lg">
+  <p className="text-sm opacity-90">
+    Vendas Hoje
+  </p>
+
+  <h2 className="text-2xl font-bold mt-2">
+    R$ {vendasHoje.toFixed(2)}
+  </h2>
+
+  <p className="text-xs mt-1 opacity-80">
+    {pedidosHoje.length} pedidos
+  </p>
+  
+</div>
+
+
+        </div>
           <div className="mt-5">
 
   <button
@@ -244,8 +411,7 @@ return (
 
 </div>
 
-        </div>
-
+</div>
         <div className="space-y-6">
 
           {orders.map((order) => (
@@ -264,12 +430,20 @@ return (
                   </h2>
 
                   <p className="text-gray-500 mt-1">
-                    {order.nome}
-                  </p>
+  {order.nome}
+</p>
 
-                  <p className="text-gray-500">
-                    {order.telefone}
-                  </p>
+<p className="text-xs text-gray-400">
+  {new Date(order.created_at).toLocaleDateString("pt-BR")} às{" "}
+  {new Date(order.created_at).toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  })}
+</p>
+
+<p className="text-gray-500">
+  {order.telefone}
+</p>
 
                 </div>
 
@@ -283,22 +457,31 @@ return (
 
                  {!order.entregue ? (
 
-  <button
-    onClick={async () => {
+  <>
+    <button
+      onClick={async () => {
 
-      await supabase
-        .from("pedidos")
-        .update({
-          entregue: true
-        })
-        .eq("id", order.id);
+        await supabase
+          .from("pedidos")
+          .update({
+            entregue: true
+          })
+          .eq("id", order.id);
 
-      loadOrders();
-    }}
-    className="bg-blue-500 text-white px-4 py-2 rounded-full font-semibold"
-  >
-    Aguardando entrega
-  </button>
+        loadOrders();
+      }}
+      className="bg-blue-500 text-white px-4 py-2 rounded-full font-semibold"
+    >
+      Aguardando entrega
+    </button>
+
+    <button
+      onClick={() => imprimirPedido(order)}
+      className="bg-green-600 text-white px-4 py-2 rounded-full font-semibold"
+    >
+      🖨️ Imprimir
+    </button>
+  </>
 
 ) : (
 
