@@ -27,6 +27,12 @@ export async function POST(req: Request) {
     );
 
     const payment = await response.json();
+    if (payment.status !== "approved") {
+  return Response.json({
+    ok: true,
+    status: payment.status,
+  });
+}
 
     console.log(payment);
 
