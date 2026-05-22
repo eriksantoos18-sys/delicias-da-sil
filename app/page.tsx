@@ -33,6 +33,7 @@ export default function HomePage() {
   const [isOpen, setIsOpen] = useState(true);
   const [showStickyHeader, setShowStickyHeader] =
     useState(false);
+  const [expandedProduct, setExpandedProduct] = useState<number | null>(null);
 
   // Recupera carrinho salvo
   useEffect(() => {
@@ -409,7 +410,7 @@ return (
 
 <section className="w-full xl:w-[calc(100%-340px)] p-4 md:p-6">
 
-  {["Fatias", "Bolos", "Salgados", "Tortas"].map((section) => {
+  {["Fatias", "Bolos", "Salgados", "Tortas", "Copos da Felicidade"].map((section) => {
 
     const filteredProducts = products.filter((product) => {
 
@@ -477,9 +478,29 @@ return (
                   {product.nome}
                 </h3>
 
-                <p className="text-[14px] text-[#7a7a7a] mt-2 line-clamp-2 min-h-[42px]">
-                  {product.descricao}
-                </p>
+                <p
+  className={`text-[14px] text-[#7a7a7a] mt-2 ${
+    expandedProduct === product.id
+      ? ""
+      : "line-clamp-2"
+  }`}
+>
+  {product.descricao}
+</p>
+<button
+  onClick={() =>
+    setExpandedProduct(
+      expandedProduct === product.id
+        ? null
+        : product.id
+    )
+  }
+  className="text-[#6d2f2f] text-sm font-medium mt-1"
+>
+  {expandedProduct === product.id
+    ? "Ver menos"
+    : "Ver mais"}
+</button>
 
                 <div className="mt-4">
 
