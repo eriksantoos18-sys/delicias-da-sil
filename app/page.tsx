@@ -9,6 +9,7 @@ interface CartItem {
   title: string;
   price: number;
   quantity: number;
+  estoque: number;
   image?: string;
 }
 
@@ -145,6 +146,13 @@ async function loadProducts() {
       (cartItem) =>
         cartItem.title === item.title
     );
+    if (
+  existingItem &&
+  existingItem.quantity >= item.estoque
+) {
+  alert("Estoque máximo atingido");
+  return;
+}
 
     if (existingItem) {
       setCart(
@@ -472,6 +480,7 @@ return (
                         price: product.preco,
                         image: product.imagem,
                         quantity: 1,
+                        estoque: product.estoque,
                       })
                     }
                     className={`w-full py-3 rounded-2xl text-sm font-semibold transition-all ${
@@ -971,6 +980,7 @@ if (phone.replace(/\D/g, "").length < 11) {
                 price: product.preco,
                 image: product.imagem,
                 quantity: 1,
+                estoque: product.estoque,
               })
             }
             className={`mt-3 w-full py-2 rounded-xl text-sm font-semibold transition-all ${
