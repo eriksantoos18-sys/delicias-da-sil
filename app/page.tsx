@@ -139,20 +139,22 @@ async function loadProducts() {
     setIsOpen(data?.loja_aberta ?? true);
   }
 
-  const addToCart = (
-    item: CartItem
-  ) => {
-    const existingItem = cart.find(
-      (cartItem) =>
-        cartItem.title === item.title
-    );
-    if (
-  existingItem &&
-  existingItem.quantity >= item.estoque
-) {
-  alert("Estoque máximo atingido");
-  return;
-}
+  const addToCart = (item: CartItem) => {
+
+  console.log("ITEM:", item);
+
+  const existingItem = cart.find(
+    (cartItem) =>
+      cartItem.title === item.title
+  );
+
+  if (
+    existingItem &&
+    existingItem.quantity >= item.estoque
+  ) {
+    alert("Estoque máximo atingido");
+    return;
+  }
 
     if (existingItem) {
       setCart(
@@ -204,21 +206,31 @@ async function loadProducts() {
     );
   };
 
-  const increaseQuantity = (
-    index: number
-  ) => {
-    setCart(
-      cart.map((cartItem, i) =>
-        i === index
-          ? {
-              ...cartItem,
-              quantity:
-                cartItem.quantity + 1,
-            }
-          : cartItem
-      )
-    );
-  };
+ const increaseQuantity = (
+  index: number
+) => {
+
+  const item = cart[index];
+
+  if (!item) return;
+
+  if (item.quantity >= item.estoque) {
+    alert("Estoque máximo atingido");
+    return;
+  }
+
+  setCart(
+    cart.map((cartItem, i) =>
+      i === index
+        ? {
+            ...cartItem,
+            quantity:
+              cartItem.quantity + 1,
+          }
+        : cartItem
+    )
+  );
+};
 
   const removeItem = (
     index: number
@@ -619,23 +631,11 @@ return (
             </span>
 
             <button
-              onClick={() => {
-                setCart(
-                  cart.map((cartItem) =>
-                    cartItem.title === item.title
-                      ? {
-                          ...cartItem,
-                          quantity:
-                            cartItem.quantity + 1,
-                        }
-                      : cartItem
-                  )
-                );
-              }}
-              className="w-8 h-8 rounded-full bg-[#6d2f2f] text-white font-bold"
-            >
-              +
-            </button>
+  onClick={() => increaseQuantity(index)}
+  className="w-8 h-8 rounded-full bg-[#6d2f2f] text-white font-bold"
+>
+  +
+</button>
 
           </div>
 
@@ -903,23 +903,11 @@ if (phone.replace(/\D/g, "").length < 11) {
     </span>
 
     <button
-      onClick={() => {
-        setCart(
-          cart.map((cartItem) =>
-            cartItem.title === item.title
-              ? {
-                  ...cartItem,
-                  quantity:
-                    cartItem.quantity + 1,
-                }
-              : cartItem
-          )
-        );
-      }}
-      className="w-8 h-8 rounded-full bg-[#6d2f2f] text-white font-bold flex items-center justify-center"
-    >
-      +
-    </button>
+  onClick={() => increaseQuantity(index)}
+  className="w-8 h-8 rounded-full bg-[#6d2f2f] text-white font-bold flex items-center justify-center"
+>
+  +
+</button>
 
   </div>
 
