@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 
 interface CartItem {
+  id: number;
   title: string;
   price: number;
   quantity: number;
@@ -466,6 +467,7 @@ return (
                     disabled={!isOpen}
                     onClick={() =>
                       addToCart({
+                        id: product.id,
                         title: product.nome,
                         price: product.preco,
                         image: product.imagem,
@@ -703,10 +705,15 @@ return (
           return;
         }
 
-        if (!name.trim() || !phone.trim()) {
-          alert("Preencha nome e telefone");
-          return;
-        }
+        if (!name.trim()) {
+  alert("Preencha o nome");
+  return;
+}
+
+if (phone.replace(/\D/g, "").length < 11) {
+  alert("Digite um telefone válido com DDD");
+  return;
+}
 
         const response = await fetch(
           "/api/checkout",
@@ -959,6 +966,7 @@ return (
             disabled={!isOpen}
             onClick={() =>
               addToCart({
+                id: product.id,
                 title: product.nome,
                 price: product.preco,
                 image: product.imagem,
@@ -1061,10 +1069,15 @@ return (
         return;
       }
 
-      if (!name.trim() || !phone.trim()) {
-        alert("Preencha nome e telefone");
-        return;
-      }
+      if (!name.trim()) {
+  alert("Preencha o nome");
+  return;
+}
+
+if (phone.replace(/\D/g, "").length < 11) {
+  alert("Digite um telefone válido com DDD");
+  return;
+}
 
       const response = await fetch(
         "/api/checkout",

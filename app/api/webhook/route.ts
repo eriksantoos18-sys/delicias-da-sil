@@ -38,12 +38,43 @@ export async function POST(req: Request) {
 
     const pedidoId = payment.external_reference;
 
-    await supabase
-      .from("pedidos")
-      .update({
-        status: "pago",
-      })
-      .eq("id", pedidoId);
+    const { data: pedido } = await supabase
+  .from("pedidos")
+  .select("*")
+  .eq("id", pedidoId)
+  .single();
+
+   if (pedido?.status !== "pago") {
+
+  for (const item of pedido.pedido) {
+
+    const { data: produto, error } = await supabase
+  .from("produtos")
+  .select("*")
+  .eq("id", item.id)
+  .single();
+
+console.log("ITEM:", item);
+console.log("PRODUTO:", produto);
+console.log("ERRO:", error);
+
+    if (produto) {
+      await supabase
+        .from("produtos")
+        .update({
+          estoque: produto.estoque - item.quantity,
+        })
+        .eq("id", item.id);
+    }
+  }
+
+  await supabase
+    .from("pedidos")
+    .update({
+      status: "pago",
+    })
+    .eq("id", pedidoId);
+}
 
     return Response.json({
       ok: true,
