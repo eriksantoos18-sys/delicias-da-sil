@@ -34,6 +34,7 @@ export default function HomePage() {
   const [showStickyHeader, setShowStickyHeader] =
     useState(false);
   const [expandedProduct, setExpandedProduct] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
 
   // Recupera carrinho salvo
   useEffect(() => {
@@ -729,46 +730,71 @@ return (
 
     </div>
 
-    <button
-      onClick={async () => {
+   <button
+  disabled={loading}
+  onClick={async () => {
 
-        if (cart.length === 0) {
-          alert("Adicione itens ao carrinho");
-          return;
-        }
+  if (loading) return;
 
-        if (!name.trim()) {
-  alert("Preencha o nome");
+  setLoading(true);
+
+  try {
+
+    if (cart.length === 0) {
+      alert("Adicione itens ao carrinho");
+      return;
+    }
+
+    if (!name.trim()) {
+      alert("Preencha o nome");
+      return;
+    }
+
+    if (phone.replace(/\D/g, "").length < 11) {
+      alert("Digite um telefone válido com DDD");
+      return;
+    }
+
+    const response = await fetch(
+      "/api/checkout",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          cart,
+          nome: name,
+          telefone: phone,
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+if (!response.ok) {
+  alert(data.error);
   return;
 }
 
-if (phone.replace(/\D/g, "").length < 11) {
-  alert("Digite um telefone válido com DDD");
-  return;
-}
+window.open(data.init_point, "_blank");
 
-        const response = await fetch(
-          "/api/checkout",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              cart,
-              nome: name,
-              telefone: phone,
-            }),
-          }
-        );
+  } catch (error) {
 
-        const data = await response.json();
+    console.error(error);
 
-        window.open(data.init_point, "_blank");
-      }}
+    alert("Erro ao criar pagamento");
+
+  } finally {
+
+    setLoading(false);
+
+  }
+
+}}
       className="w-full bg-[#6d2f2f] hover:bg-[#572525] text-white py-4 rounded-2xl text-lg font-bold transition"
     >
-      Finalizar Compra
+      {loading ? "Processando..." : "Finalizar Compra"}
     </button>
 
   </div>
@@ -1083,7 +1109,14 @@ if (phone.replace(/\D/g, "").length < 11) {
   </div>
 
   <button
-    onClick={async () => {
+  disabled={loading}
+  onClick={async () => {
+
+    if (loading) return;
+
+    setLoading(true);
+
+    try {
 
       if (cart.length === 0) {
         alert("Adicione itens ao carrinho");
@@ -1091,14 +1124,14 @@ if (phone.replace(/\D/g, "").length < 11) {
       }
 
       if (!name.trim()) {
-  alert("Preencha o nome");
-  return;
-}
+        alert("Preencha o nome");
+        return;
+      }
 
-if (phone.replace(/\D/g, "").length < 11) {
-  alert("Digite um telefone válido com DDD");
-  return;
-}
+      if (phone.replace(/\D/g, "").length < 11) {
+        alert("Digite um telefone válido com DDD");
+        return;
+      }
 
       const response = await fetch(
         "/api/checkout",
@@ -1117,12 +1150,34 @@ if (phone.replace(/\D/g, "").length < 11) {
 
       const data = await response.json();
 
-      window.open(data.init_point, "_blank");
-    }}
-    className="mt-5 w-full bg-[#6d2f2f] hover:bg-[#5a2525] active:scale-[0.98] transition-all text-white py-4 rounded-2xl text-[18px] font-bold shadow-lg"
-  >
-    Finalizar pedido • R$ {total.toFixed(2)}
-  </button>
+if (!response.ok) {
+  alert(data.error);
+  return;
+}
+
+window.open(data.init_point, "_blank");
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert("Erro ao criar pagamento");
+
+    } finally {
+
+      setLoading(false);
+
+    }
+
+  }}
+  className="mt-5 w-full bg-[#6d2f2f] hover:bg-[#5a2525] active:scale-[0.98] transition-all text-white py-4 rounded-2xl text-[18px] font-bold shadow-lg"
+>
+  {
+    loading
+      ? "Processando..."
+      : `Finalizar pedido • R$ ${total.toFixed(2)}`
+  }
+</button>
 
 </div>
 </div>
