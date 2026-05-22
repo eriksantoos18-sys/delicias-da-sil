@@ -109,7 +109,9 @@ export default function HomePage() {
 async function loadProducts() {
     const { data, error } = await supabase
       .from("produtos")
-      .select("*");
+      .select("*")
+.gt("estoque", 0);
+
 
     if (error) {
       console.error(
