@@ -149,6 +149,29 @@ useEffect(() => {
     loadOrders();
   }
 
+  async function marcarPronto(id: number) {
+
+  const response = await fetch(
+    "/api/pedido-pronto",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        pedidoId: id,
+      }),
+    }
+  );
+
+  if (response.ok) {
+    alert("Cliente avisado com sucesso!");
+    loadOrders();
+  } else {
+    alert("Erro ao enviar WhatsApp");
+  }
+}
+
   function getStatusColor(
     status: string
   ) {
@@ -163,6 +186,7 @@ useEffect(() => {
 
   default:
     return "bg-orange-500";
+    
 }
   }
 
@@ -481,6 +505,13 @@ return (
     >
       🖨️ Imprimir
     </button>
+
+    <button
+  onClick={() => marcarPronto(order.id)}
+  className="bg-purple-600 text-white px-4 py-2 rounded-full font-semibold"
+>
+  📦 Pronto para retirada
+</button>
   </>
 
 ) : (

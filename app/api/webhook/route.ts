@@ -131,18 +131,6 @@ ${itens}
 
 Obrigado pela preferência!`
 );
-  await enviarWhatsapp(
-  pedido.telefone,
-  `✅ Pagamento aprovado!
-
-Olá ${pedido.nome},
-
-Recebemos seu pagamento com sucesso.
-
-Pedido #${pedido.id}
-
-Obrigado pela preferência!`
-);
 }
 
     return Response.json({
