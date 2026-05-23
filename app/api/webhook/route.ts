@@ -5,6 +5,31 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+async function enviarWhatsapp(
+  telefone: string,
+  mensagem: string
+) {
+  const numero = telefone.replace(/\D/g, "");
+
+  await fetch(
+    `https://graph.facebook.com/v25.0/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.WHATSAPP_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        messaging_product: "whatsapp",
+        to: `55${numero}`,
+        type: "text",
+        text: {
+          body: mensagem,
+        },
+      }),
+    }
+  );
+}
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -74,6 +99,36 @@ console.log("ERRO:", error);
       status: "pago",
     })
     .eq("id", pedidoId);
+
+const itens = pedido.pedido
+  .map((item: any) => `• ${item.quantity}x ${item.title}`)
+  .join("\n");
+  await enviarWhatsapp(
+  pedido.telefone,
+  `✅ Pagamento aprovado!
+
+Olá ${pedido.nome},
+
+Recebemos seu pagamento com sucesso.
+
+📦 Pedido #${pedido.id}
+
+${itens}
+
+Obrigado pela preferência!`
+);
+  await enviarWhatsapp(
+  pedido.telefone,
+  `✅ Pagamento aprovado!
+
+Olá ${pedido.nome},
+
+Recebemos seu pagamento com sucesso.
+
+Pedido #${pedido.id}
+
+Obrigado pela preferência!`
+);
 }
 
     return Response.json({
