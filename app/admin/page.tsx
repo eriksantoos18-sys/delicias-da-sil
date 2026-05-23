@@ -137,17 +137,29 @@ useEffect(() => {
 }
 
   async function updateStatus(
-    id: number,
-    status: string
-  ) {
+  id: number,
+  status: string
+) {
 
-    await supabase
-      .from("pedidos")
-      .update({ status })
-      .eq("id", id);
+  console.log("ID:", id);
+  console.log("STATUS:", status);
 
-    loadOrders();
+  const { data, error } = await supabase
+    .from("pedidos")
+    .update({ status })
+    .eq("id", id)
+    .select();
+
+  console.log("DATA:", data);
+  console.log("ERROR:", error);
+
+  if (error) {
+    alert(error.message);
+    return;
   }
+
+  loadOrders();
+}
 
   async function marcarPronto(id: number) {
 
@@ -165,9 +177,19 @@ useEffect(() => {
   );
 
   if (response.ok) {
-    alert("Cliente avisado com sucesso!");
-    loadOrders();
-  } else {
+
+  await supabase
+    .from("pedidos")
+    .update({
+      status: "pronto_retirada",
+    })
+    .eq("id", id);
+
+  alert("Cliente avisado com sucesso!");
+
+  loadOrders();
+
+} else {
     alert("Erro ao enviar WhatsApp");
   }
 }
@@ -268,11 +290,11 @@ const totalVendas = orders
   );
 
 const pedidosEntregues = orders.filter(
-  (order) => order.entregue
+  (order) => order.status === "entregue"
 ).length;
 
 const pedidosPendentes = orders.filter(
-  (order) => !order.entregue
+  (order) => order.status !== "entregue"
 ).length;
 const hoje = new Date().toISOString().split("T")[0];
 
@@ -363,62 +385,6 @@ return (
           </p>
 <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-5">
 
-  <div className="bg-green-500 text-white p-5 rounded-3xl shadow-lg">
-    <p className="text-sm opacity-90">
-      Faturamento
-    </p>
-
-    <h2 className="text-2xl font-bold mt-2">
-      R$ {totalVendas.toFixed(2)}
-    </h2>
-  </div>
-
-  <div className="bg-blue-500 text-white p-5 rounded-3xl shadow-lg">
-    <p className="text-sm opacity-90">
-      Pedidos
-    </p>
-
-    <h2 className="text-2xl font-bold mt-2">
-      {orders.length}
-    </h2>
-  </div>
-
-  <div className="bg-purple-500 text-white p-5 rounded-3xl shadow-lg">
-    <p className="text-sm opacity-90">
-      Entregues
-    </p>
-
-    <h2 className="text-2xl font-bold mt-2">
-      {pedidosEntregues}
-    </h2>
-  </div>
-
-  <div className="bg-orange-500 text-white p-5 rounded-3xl shadow-lg">
-    <p className="text-sm opacity-90">
-      Pendentes
-    </p>
-
-    <h2 className="text-2xl font-bold mt-2">
-      {pedidosPendentes}
-    </h2>
-  </div>
-
-  <div className="bg-emerald-600 text-white p-5 rounded-3xl shadow-lg">
-  <p className="text-sm opacity-90">
-    Vendas Hoje
-  </p>
-
-  <h2 className="text-2xl font-bold mt-2">
-    R$ {vendasHoje.toFixed(2)}
-  </h2>
-
-  <p className="text-xs mt-1 opacity-80">
-    {pedidosHoje.length} pedidos
-  </p>
-  
-</div>
-
-
         </div>
           <div className="mt-5">
 
@@ -475,45 +441,53 @@ return (
 
                 <div className="flex items-center gap-3">
 
-                  <span
-                    className={`${getStatusColor(order.status)} text-white px-4 py-2 rounded-full font-semibold capitalize`}
-                  >
-                    {order.status.replace("_", " ")}
-                  </span>
 
-                 {!order.entregue ? (
-
+{order.status === "pago" && (
   <>
-  <button
-    onClick={() => marcarPronto(order.id)}
-    className="bg-amber-500 text-white px-4 py-2 rounded-full font-semibold"
-  >
-    📦 Pronto para retirada
-  </button>
+    <button
+      onClick={() => marcarPronto(order.id)}
+      className="bg-yellow-500 text-white px-4 py-2 rounded-full font-semibold"
+    >
+      📦 Pronto para retirada
+    </button>
 
-  <button
-    onClick={() =>
-      updateStatus(order.id, "entregue")
-    }
-    className="bg-gray-700 text-white px-4 py-2 rounded-full font-semibold"
-  >
-    ✅ Entregue
-  </button>
+    <button
+      onClick={() => imprimirPedido(order)}
+      className="bg-blue-600 text-white px-4 py-2 rounded-full font-semibold"
+    >
+      🖨️ Imprimir
+    </button>
+  </>
+)}
 
-  <button
-    onClick={() => imprimirPedido(order)}
-    className="bg-green-600 text-white px-4 py-2 rounded-full font-semibold"
-  >
-    🖨️ Imprimir
-  </button>
-</>
+{order.status === "pronto_retirada" && (
+  <>
+    <div className="bg-yellow-500 text-white px-4 py-2 rounded-full font-semibold">
+      🟡 Aguardando retirada
+    </div>
 
-) : (
+    <button
+      onClick={() => imprimirPedido(order)}
+      className="bg-blue-600 text-white px-4 py-2 rounded-full font-semibold"
+    >
+      🖨️ Imprimir
+    </button>
 
-  <div className="bg-gray-700 text-white px-4 py-2 rounded-full font-semibold">
-    Entregue
+    <button
+      onClick={() =>
+        updateStatus(order.id, "entregue")
+      }
+      className="bg-green-600 text-white px-4 py-2 rounded-full font-semibold"
+    >
+      ✔ Confirmar retirada
+    </button>
+  </>
+)}
+
+{order.status === "entregue" && (
+  <div className="bg-green-600 text-white px-4 py-2 rounded-full font-semibold">
+    ✅ Retirado pelo cliente
   </div>
-
 )}
 
                 </div>
