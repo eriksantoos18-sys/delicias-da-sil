@@ -11,6 +11,9 @@ async function enviarWhatsapp(
 ) {
   const numero = telefone.replace(/\D/g, "");
 
+  console.log("TELEFONE BANCO:", telefone);
+console.log("NUMERO FORMATADO:", numero);
+
   const response = await fetch(
 
     `https://graph.facebook.com/v25.0/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`,
@@ -30,7 +33,7 @@ async function enviarWhatsapp(
       }),
     }
   );
-  
+
   const data = await response.json();
 
 console.log("WHATSAPP STATUS:", response.status);
