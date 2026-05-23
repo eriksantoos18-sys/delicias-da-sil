@@ -181,12 +181,14 @@ useEffect(() => {
   case "pago":
     return "bg-green-500";
 
+  case "pronto_retirada":
+    return "bg-yellow-500";
+
   case "entregue":
     return "bg-gray-700";
 
   default:
     return "bg-orange-500";
-    
 }
   }
 
@@ -482,37 +484,29 @@ return (
                  {!order.entregue ? (
 
   <>
-    <button
-      onClick={async () => {
+  <button
+    onClick={() => marcarPronto(order.id)}
+    className="bg-amber-500 text-white px-4 py-2 rounded-full font-semibold"
+  >
+    📦 Pronto para retirada
+  </button>
 
-        await supabase
-          .from("pedidos")
-          .update({
-            entregue: true
-          })
-          .eq("id", order.id);
+  <button
+    onClick={() =>
+      updateStatus(order.id, "entregue")
+    }
+    className="bg-gray-700 text-white px-4 py-2 rounded-full font-semibold"
+  >
+    ✅ Entregue
+  </button>
 
-        loadOrders();
-      }}
-      className="bg-blue-500 text-white px-4 py-2 rounded-full font-semibold"
-    >
-      Aguardando entrega
-    </button>
-
-    <button
-      onClick={() => imprimirPedido(order)}
-      className="bg-green-600 text-white px-4 py-2 rounded-full font-semibold"
-    >
-      🖨️ Imprimir
-    </button>
-
-    <button
-  onClick={() => marcarPronto(order.id)}
-  className="bg-purple-600 text-white px-4 py-2 rounded-full font-semibold"
->
-  📦 Pronto para retirada
-</button>
-  </>
+  <button
+    onClick={() => imprimirPedido(order)}
+    className="bg-green-600 text-white px-4 py-2 rounded-full font-semibold"
+  >
+    🖨️ Imprimir
+  </button>
+</>
 
 ) : (
 
