@@ -38,6 +38,8 @@ console.log("NUMERO FORMATADO:", numero);
 
 console.log("WHATSAPP STATUS:", response.status);
 console.log("WHATSAPP RESPOSTA:", data);
+console.log("WHATSAPP RESPOSTA COMPLETA:");
+console.log(JSON.stringify(data, null, 2));
 }
 
 
