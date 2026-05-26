@@ -7,15 +7,12 @@ const supabase = createClient(
 
 async function enviarWhatsapp(
   telefone: string,
-  mensagem: string
+  nome: string,
+  pedidoId: number
 ) {
   const numero = telefone.replace(/\D/g, "");
 
-  console.log("TELEFONE BANCO:", telefone);
-console.log("NUMERO FORMATADO:", numero);
-
   const response = await fetch(
-
     `https://graph.facebook.com/v25.0/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`,
     {
       method: "POST",
@@ -26,9 +23,27 @@ console.log("NUMERO FORMATADO:", numero);
       body: JSON.stringify({
         messaging_product: "whatsapp",
         to: `55${numero}`,
-        type: "text",
-        text: {
-          body: mensagem,
+        type: "template",
+        template: {
+          name: "pagamento_aprovado",
+          language: {
+            code: "pt_BR",
+          },
+          components: [
+            {
+              type: "body",
+              parameters: [
+                {
+                  type: "text",
+                  text: nome,
+                },
+                {
+                  type: "text",
+                  text: String(pedidoId),
+                },
+              ],
+            },
+          ],
         },
       }),
     }
@@ -36,10 +51,8 @@ console.log("NUMERO FORMATADO:", numero);
 
   const data = await response.json();
 
-console.log("WHATSAPP STATUS:", response.status);
-console.log("WHATSAPP RESPOSTA:", data);
-console.log("WHATSAPP RESPOSTA COMPLETA:");
-console.log(JSON.stringify(data, null, 2));
+  console.log("WHATSAPP STATUS:", response.status);
+  console.log("WHATSAPP RESPOSTA:", data);
 }
 
 
@@ -119,18 +132,9 @@ const itens = pedido.pedido
   .join("\n");
   await enviarWhatsapp(
   pedido.telefone,
-  `✅ Pagamento aprovado!
-
-Olá ${pedido.nome},
-
-Recebemos seu pagamento com sucesso.
-
-📦 Pedido #${pedido.id}
-
-${itens}
-
-Obrigado pela preferência!`
-);
+  pedido.nome,
+  pedido.id,
+  );
 }
 
     return Response.json({
