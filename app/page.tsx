@@ -777,6 +777,8 @@ if (!response.ok) {
   return;
 }
 
+setCart([]);
+
 window.open(data.init_point, "_blank");
 
   } catch (error) {
@@ -1154,6 +1156,8 @@ if (!response.ok) {
   alert(data.error);
   return;
 }
+
+setCart([]);
 
 window.open(data.init_point, "_blank");
 

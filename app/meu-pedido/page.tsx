@@ -14,26 +14,40 @@ interface Pedido {
 }
 
 export default function MeuPedidoPage() {
+  const [pedidoId, setPedidoId] = useState("");
   const [phone, setPhone] = useState("");
   const [orders, setOrders] = useState<Pedido[]>([]);
   const [loading, setLoading] = useState(false);
 
   async function searchOrders() {
-    setLoading(true);
 
-    const { data } = await supabase
-      .from("pedidos")
-      .select("*")
-      .ilike("telefone", `%${phone}%`)
-      .order("id", { ascending: false });
-
-    console.log(data);
-    if (data) {
-      setOrders(data);
-    }
-
-    setLoading(false);
+  if (!phone.trim()) {
+    alert("Digite seu telefone");
+    return;
   }
+
+  if (phone.length < 15) {
+    alert("Digite o telefone completo.");
+    return;
+  }
+
+  setLoading(true);
+
+  const { data } = await supabase
+    .from("pedidos")
+    .select("*")
+    .eq("id", Number(pedidoId))
+    .eq("telefone", phone)
+    .order("id", { ascending: false });
+
+  console.log(data);
+
+  if (data) {
+    setOrders(data);
+  }
+
+  setLoading(false);
+}
 
   function getStatusColor(status: string) {
     switch (status) {
@@ -70,6 +84,15 @@ export default function MeuPedidoPage() {
           </p>
 
           <div className="flex gap-3">
+
+
+            <input
+  type="number"
+  placeholder="Número do pedido"
+  value={pedidoId}
+  onChange={(e) => setPedidoId(e.target.value)}
+  className="w-full"
+/>
 
             <input
   type="tel"

@@ -7,11 +7,12 @@ const supabase = createClient(
 
 async function enviarWhatsapp(
   telefone: string,
-  mensagem: string
+  nome: string,
+  pedidoId: number
 ) {
   const numero = telefone.replace(/\D/g, "");
 
-  await fetch(
+  const response = await fetch(
     `https://graph.facebook.com/v25.0/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`,
     {
       method: "POST",
@@ -22,13 +23,36 @@ async function enviarWhatsapp(
       body: JSON.stringify({
         messaging_product: "whatsapp",
         to: `55${numero}`,
-        type: "text",
-        text: {
-          body: mensagem,
+        type: "template",
+        template: {
+          name: "pedido_pronto_v2",
+          language: {
+            code: "pt_BR",
+          },
+          components: [
+            {
+              type: "body",
+              parameters: [
+                {
+                  type: "text",
+                  text: nome,
+                },
+                {
+                  type: "text",
+                  text: String(pedidoId),
+                },
+              ],
+            },
+          ],
         },
       }),
     }
   );
+
+  const data = await response.json();
+
+  console.log("WHATSAPP STATUS:", response.status);
+  console.log("WHATSAPP RESPOSTA:", data);
 }
 
 export async function POST(req: Request) {
@@ -56,14 +80,9 @@ export async function POST(req: Request) {
 
   await enviarWhatsapp(
     pedido.telefone,
-    `📦 Seu pedido está pronto!
-
-Olá ${pedido.nome},
-
-Seu pedido #${pedido.id} já está disponível para retirada.
-
-Aguardamos você!`
-  );
+    pedido.nome,
+    pedido.id
+    );
 
   return Response.json({
     ok: true,
