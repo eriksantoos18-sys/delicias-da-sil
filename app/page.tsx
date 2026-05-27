@@ -274,7 +274,7 @@ return (
             <div>
 
               <h2 className="text-[15px] font-semibold text-[#2d1f1f] leading-4">
-                Delicias da Sil
+                Delícias da Sil
               </h2>
 
               <p className="text-[12px] text-[#7a7a7a]">
@@ -306,7 +306,7 @@ return (
           <div>
 
             <h1 className="text-xl md:text-2xl font-bold">
-              Delicias da Sil
+              Delícias da Sil
             </h1>
 
             <p className="text-xs text-white/70 mt-1">
@@ -355,7 +355,7 @@ return (
     <div className="ml-28 md:ml-40">
 
       <h1 className="text-[26px] md:text-[42px] font-bold text-[#2d1f1f] leading-tight">
-        Delicias da Sil
+        Delícias da Sil
       </h1>
 
       <p className="text-[#7a7a7a] mt-1 text-sm md:text-lg">
@@ -379,7 +379,7 @@ return (
         </span>
 
         <span className="text-[#6f6f6f]">
-          📍 Maceió - AL
+          📍 Massagueira - Marechal Deodoro - AL
         </span>
 
       </div>
