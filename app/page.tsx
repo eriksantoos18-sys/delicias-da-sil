@@ -278,7 +278,7 @@ return (
               </h2>
 
               <p className="text-[12px] text-[#7a7a7a]">
-                Doces feitos com amor 🍫
+
               </p>
 
             </div>
@@ -310,7 +310,6 @@ return (
             </h1>
 
             <p className="text-xs text-white/70 mt-1">
-              Doces feitos com amor 🍫
             </p>
 
           </div>
@@ -344,7 +343,7 @@ return (
 
   </div>
 
-  <section className="relative px-2 md:px-4 py-5">
+  <section className="relative px-2 md:px-4 py-2">
 
     <img
       src="/logo.png"
