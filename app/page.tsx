@@ -314,16 +314,12 @@ return (
 
           </div>
 
-          <nav className="hidden md:flex items-center gap-6 text-[15px]">
-
-            <Link
-              href="/meu-pedido"
-              className="hover:text-yellow-300 transition"
-            >
-              Meus Pedidos
-            </Link>
-
-          </nav>
+          <Link
+  href="/meu-pedido"
+  className="bg-white/10 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-white/20 transition"
+>
+  Pedidos
+</Link>
 
         </div>
 
