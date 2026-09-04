@@ -297,8 +297,8 @@ return (
       </div>
     )}
 
-    <main className="bg-[#fffaf5] min-h-screen">
-
+<main className="bg-[#fffaf5] min-h-screen pb-28 md:pb-0">
+  
       <header className="sticky top-0 z-40 bg-[#4a2c2a] text-white px-4 md:px-6 py-4 shadow-lg">
 
         <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -362,27 +362,42 @@ return (
         Doces feitos com amor 🍫
       </p>
 
-      <div className="flex flex-wrap items-center gap-2 mt-3 text-sm">
+      <div className="flex flex-wrap items-center gap-3 mt-4 text-sm">
 
-        <span
-          className={`px-3 py-1 rounded-full font-medium ${
-            isOpen
-              ? "bg-green-100 text-green-700"
-              : "bg-red-100 text-red-600"
-          }`}
-        >
-          {isOpen ? "🟢 Aberto agora" : "🔴 Fechado"}
-        </span>
+  <span
+    className={`h-10 px-4 rounded-xl font-medium flex items-center ${
+      isOpen
+        ? "bg-green-100 text-green-700"
+        : "bg-red-100 text-red-600"
+    }`}
+  >
+    {isOpen ? "🟢 Aberto agora" : "🔴 Fechado"}
+  </span>
 
-        <span className="text-[#b8b8b8]">
-          •
-        </span>
+  <span className="h-10 flex items-center text-[#6f6f6f]">
+    📍 Massagueira - Marechal Deodoro - AL
+  </span>
 
-        <span className="text-[#6f6f6f]">
-          📍 Massagueira - Marechal Deodoro - AL
-        </span>
+  <a
+    href="https://wa.me/5582996514194?text=Ol%C3%A1%21%20Vim%20pelo%20site%20da%20Del%C3%ADcias%20da%20Sil."
+    target="_blank"
+    rel="noopener noreferrer"
+    className="h-10 inline-flex items-center gap-2 rounded-xl border border-[#ece7e2] bg-white px-4 font-semibold text-[#2d1f1f] shadow-sm hover:bg-[#faf7f4] transition"
+  >
+    <svg
+      viewBox="0 0 32 32"
+      className="h-5 w-5 text-green-500"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M16 3C8.83 3 3 8.61 3 15.5c0 2.43.73 4.8 2.1 6.82L3.72 29l7.05-1.33A13.35 13.35 0 0 0 16 28c7.17 0 13-5.61 13-12.5S23.17 3 16 3zm0 22.9c-1.72 0-3.41-.44-4.89-1.27l-.35-.2-4.18.79.82-3.94-.23-.37A10.18 10.18 0 0 1 5.1 15.5C5.1 9.77 9.99 5.1 16 5.1s10.9 4.67 10.9 10.4S22.01 25.9 16 25.9zm5.98-7.78c-.33-.16-1.94-.92-2.24-1.03-.3-.11-.52-.16-.74.16-.22.32-.85 1.03-1.04 1.24-.19.22-.38.24-.71.08-.33-.16-1.39-.49-2.65-1.57-.98-.94-1.64-2.1-1.83-2.45-.19-.32-.02-.5.14-.66.15-.14.33-.38.49-.57.16-.19.22-.32.33-.54.11-.22.05-.41-.03-.57-.08-.16-.74-1.71-1.01-2.34-.27-.64-.54-.55-.74-.56h-.63c-.22 0-.57.08-.87.41-.3.32-1.14 1.08-1.14 2.63s1.17 3.05 1.33 3.26c.16.22 2.3 3.38 5.57 4.74.78.32 1.38.51 1.86.65.78.24 1.49.21 2.05.13.63-.09 1.94-.76 2.21-1.49.27-.73.27-1.35.19-1.49-.08-.13-.3-.21-.63-.37z" />
+    </svg>
 
-      </div>
+    Fale conosco
+  </a>
+
+</div>
+
 
     </div>
 
