@@ -25,7 +25,7 @@ async function enviarWhatsapp(
         to: `55${numero}`,
         type: "template",
         template: {
-          name: "pedido_pronto_v2",
+          name: "pedido_prontov2",
           language: {
             code: "pt_BR",
           },
