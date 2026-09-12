@@ -423,7 +423,7 @@ return (
 
 <section className="w-full xl:w-[calc(100%-340px)] p-4 md:p-6">
 
-  {["Fatias", "Bolos", "Salgados", "Tortas", "Copos da Felicidade", "Doces"].map((section) => {
+  {["Doces", "Fatias", "Bolos", "Salgados", "Tortas", "Copos da Felicidade"].map((section) => {
 
     const filteredProducts = products.filter((product) => {
 
