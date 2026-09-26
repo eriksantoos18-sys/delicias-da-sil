@@ -42,7 +42,7 @@ async function enviarWhatsapp(
         type: "template",
 
         template: {
-          name: "pagamento_aprovado",
+          name: "pagamento_aprovado_v2",
 
           language: {
             code: "pt_BR",
