@@ -28,6 +28,8 @@ export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [cpf, setCpf] = useState("");
   const [openCart, setOpenCart] = useState(false);
   const [search, setSearch] = useState("");
   const [isOpen, setIsOpen] = useState(true);
@@ -704,6 +706,7 @@ return (
       value={phone}
       maxLength={15}
       onChange={(e) => {
+    
 
         let value = e.target.value
           .replace(/\D/g, "")
@@ -723,8 +726,8 @@ return (
       }}
       className="w-full bg-[#f8f5f1] rounded-2xl px-4 py-3 outline-none mb-4"
     />
-
-    <div className="bg-[#fffaf5] rounded-2xl p-4 mb-4">
+  
+      <div className="bg-[#fffaf5] rounded-2xl p-4 mb-4">
 
       <div className="flex justify-between items-center">
 
@@ -809,8 +812,45 @@ window.open(data.init_point, "_blank");
       {loading ? "Processando..." : "Finalizar Compra"}
     </button>
 
-  </div>
+<button
+  type="button"
+  disabled={loading}
+  onClick={() => {
+    if (cart.length === 0) {
+      alert("Adicione itens ao carrinho");
+      return;
+    }
 
+    if (!name.trim()) {
+      alert("Preencha o nome");
+      return;
+    }
+
+    if (phone.replace(/\D/g, "").length < 11) {
+      alert("Digite um telefone válido com DDD");
+      return;
+    }
+
+    sessionStorage.removeItem("pagamentoPix");
+    sessionStorage.removeItem("chavePagamentoPix");
+
+    sessionStorage.setItem(
+      "compraPendentePix",
+      JSON.stringify({
+        cart,
+        nome: name.trim(),
+        telefone: phone,
+      })
+    );
+
+    window.location.href = "/pagamento-pix";
+  }}
+  className="mt-3 w-full rounded-2xl border-2 border-[#6d2f2f] bg-white py-4 text-lg font-bold text-[#6d2f2f] transition hover:bg-[#fff5f0]"
+>
+  Pagar com Pix
+</button>
+
+</div>
 </aside>
 </div>
 {cart.length > 0 && (
@@ -1091,7 +1131,7 @@ window.open(data.init_point, "_blank");
     }}
     className="w-full bg-[#faf7f4] border border-[#ece7e2] rounded-2xl px-4 py-3 outline-none text-[16px]"
   />
-
+  
   <div className="bg-[#faf7f4] rounded-2xl p-4 mt-4">
 
     <div className="flex justify-between items-center">
@@ -1192,7 +1232,43 @@ window.open(data.init_point, "_blank");
       : `Finalizar pedido • R$ ${total.toFixed(2)}`
   }
 </button>
+<button
+  type="button"
+  disabled={loading}
+  onClick={() => {
+    if (cart.length === 0) {
+      alert("Adicione itens ao carrinho");
+      return;
+    }
 
+    if (!name.trim()) {
+      alert("Preencha o nome");
+      return;
+    }
+
+    if (phone.replace(/\D/g, "").length < 11) {
+      alert("Digite um telefone válido com DDD");
+      return;
+    }
+
+    sessionStorage.removeItem("pagamentoPix");
+    sessionStorage.removeItem("chavePagamentoPix");
+
+    sessionStorage.setItem(
+      "compraPendentePix",
+      JSON.stringify({
+        cart,
+        nome: name.trim(),
+        telefone: phone,
+      })
+    );
+
+    window.location.href = "/pagamento-pix";
+  }}
+  className="mt-3 w-full rounded-2xl border-2 border-[#6d2f2f] bg-white py-4 text-lg font-bold text-[#6d2f2f]"
+>
+  Pagar com Pix
+</button>
 </div>
 </div>
 </div>

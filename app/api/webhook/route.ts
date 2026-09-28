@@ -173,19 +173,52 @@ export async function POST(req: Request) {
       .single();
 
     if (erroPedido || !pedido) {
-      console.error(
-        "PEDIDO NÃO ENCONTRADO:",
-        erroPedido
-      );
+  console.error(
+    "PEDIDO NÃO ENCONTRADO:",
+    erroPedido
+  );
 
-      throw new Error("Pedido não encontrado");
-    }
+  throw new Error("Pedido não encontrado");
+}
 
+// VERIFICA SE O PAGAMENTO PERTENCE AO PEDIDO
+if (
+  pedido.payment_id &&
+  pedido.payment_id !== String(payment.id)
+) {
+  console.error(
+    "PAGAMENTO NÃO CORRESPONDE AO PEDIDO:",
+    pedido.id
+  );
+
+  return Response.json(
+    { error: "Pagamento não corresponde ao pedido." },
+    { status: 400 }
+  );
+}
+    if (
+  Math.round(Number(payment.transaction_amount) * 100) !==
+  Math.round(Number(pedido.total) * 100)
+) {
+  console.error(
+    "VALOR DO PAGAMENTO DIFERENTE DO PEDIDO:",
+    pedido.id
+  );
+
+  return Response.json(
+    { error: "Valor do pagamento divergente." },
+    { status: 400 }
+  );
+}
     // ==================================================
     // EVITA PROCESSAR O MESMO PAGAMENTO DUAS VEZES
     // ==================================================
 
-    if (pedido.status === "pago") {
+    if (
+  ["pago", "pronto_retirada", "entregue"].includes(
+    pedido.status
+  )
+) {
       console.log(
         "PEDIDO JÁ ESTAVA PAGO:",
         pedido.id
@@ -201,77 +234,45 @@ export async function POST(req: Request) {
     // BAIXA O ESTOQUE
     // ==================================================
 
-    for (const item of pedido.pedido) {
-      const {
-        data: produto,
-        error: erroProduto,
-      } = await supabase
-        .from("produtos")
-        .select("*")
-        .eq("id", item.id)
-        .single();
+    // CONFIRMA O PAGAMENTO E BAIXA O ESTOQUE
+const { data: processado, error: erroConfirmacao } =
+  await supabase.rpc("confirmar_pagamento_pedido", {
+    p_pedido_id: pedido.id,
+    p_payment_id: String(payment.id),
+  });
 
-      console.log("ITEM:", item);
-      console.log("PRODUTO:", produto);
-      console.log("ERRO PRODUTO:", erroProduto);
+if (erroConfirmacao) {
+  console.error(
+    "ERRO AO CONFIRMAR PAGAMENTO:",
+    erroConfirmacao
+  );
 
-      if (produto) {
-        const novoEstoque =
-          produto.estoque - item.quantity;
+  throw new Error("Erro ao confirmar pagamento");
+}
 
-        const { error: erroEstoque } =
-          await supabase
-            .from("produtos")
-            .update({
-              estoque: novoEstoque,
-            })
-            .eq("id", item.id);
-
-        if (erroEstoque) {
-          console.error(
-            "ERRO AO ATUALIZAR ESTOQUE:",
-            erroEstoque
-          );
-
-          throw new Error(
-            "Erro ao atualizar estoque"
-          );
-        }
-      }
-    }
-
-    // ==================================================
-    // ALTERA PEDIDO PARA PAGO
-    // ==================================================
-
-    const { error: erroStatus } =
-      await supabase
-        .from("pedidos")
-        .update({
-          status: "pago",
-        })
-        .eq("id", pedidoId);
-
-    if (erroStatus) {
-      console.error(
-        "ERRO AO ATUALIZAR PEDIDO:",
-        erroStatus
-      );
-
-      throw new Error(
-        "Erro ao atualizar status do pedido"
-      );
-    }
+if (processado === false) {
+  return Response.json({
+    ok: true,
+    status: "pedido_ja_processado",
+  });
+}
 
     // ==================================================
     // ENVIA CONFIRMAÇÃO PELO WHATSAPP
     // ==================================================
 
-    await enviarWhatsapp(
-      pedido.telefone,
-      pedido.nome,
-      pedido.id
-    );
+    try {
+  await enviarWhatsapp(
+    pedido.telefone,
+    pedido.nome,
+    pedido.id
+  );
+} catch (erroWhatsapp) {
+  console.error(
+    "Pagamento confirmado, mas houve erro no WhatsApp:",
+    erroWhatsapp
+  );
+}
 
     console.log(
       "PAGAMENTO PROCESSADO COM SUCESSO:",

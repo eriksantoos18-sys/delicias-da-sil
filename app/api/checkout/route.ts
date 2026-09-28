@@ -13,6 +13,30 @@ const supabase = createClient(
 export async function POST(req: Request) {
   try {
     const { cart, nome, telefone } = await req.json();
+    
+    for (const item of cart) {
+  const { data: produto } = await supabase
+    .from("produtos")
+    .select("estoque")
+    .eq("id", item.id)
+    .single();
+
+  if (!produto) {
+    return Response.json(
+      { error: "Produto não encontrado" },
+      { status: 400 }
+    );
+  }
+
+  if (item.quantity > produto.estoque) {
+    return Response.json(
+      {
+        error: `${item.title} possui apenas ${produto.estoque} unidade(s) em estoque`,
+      },
+      { status: 400 }
+    );
+  }
+}
 
     const total = cart.reduce(
       (acc: number, item: any) =>
