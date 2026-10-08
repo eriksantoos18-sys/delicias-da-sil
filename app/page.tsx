@@ -1235,7 +1235,7 @@ window.open(data.init_point, "_blank");
   {
     loading
       ? "Processando..."
-      : `Pagar com cartão 💳 • R$ ${total.toFixed(2)}`
+      : `Pagar com cartão 💳`
   }
 </button>
 <button
