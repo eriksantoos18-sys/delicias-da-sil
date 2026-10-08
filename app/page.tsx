@@ -742,6 +742,9 @@ return (
       </div>
 
     </div>
+    <p className="mb-3 text-center text-sm text-gray-600">
+  Escolha uma das formas de pagamento para finalizar seu pedido.
+</p>
 
    <button
   disabled={loading}
@@ -809,7 +812,7 @@ window.open(data.init_point, "_blank");
 }}
       className="w-full bg-[#6d2f2f] hover:bg-[#572525] text-white py-4 rounded-2xl text-lg font-bold transition"
     >
-      {loading ? "Processando..." : "Finalizar Compra"}
+      {loading ? "Processando..." : "Pagar com cartão 💳"}
     </button>
 
 <button
@@ -1159,6 +1162,9 @@ window.open(data.init_point, "_blank");
     </div>
 
   </div>
+  <p className="mb-3 text-center text-sm text-gray-600">
+  Escolha uma das formas de pagamento para finalizar seu pedido.
+</p>
 
   <button
   disabled={loading}
@@ -1229,7 +1235,7 @@ window.open(data.init_point, "_blank");
   {
     loading
       ? "Processando..."
-      : `Finalizar pedido • R$ ${total.toFixed(2)}`
+      : `Pagar com cartão 💳 • R$ ${total.toFixed(2)}`
   }
 </button>
 <button
